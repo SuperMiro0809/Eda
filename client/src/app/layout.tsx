@@ -13,6 +13,8 @@ import { I18nProvider } from '@/locales/i18n-provider';
 import { detectSettings } from '@/components/settings/server';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from '@/components/settings';
 
+import { MainLayout } from '@/layouts/main/layout';
+
 // ----------------------------------------------------------------------
 
 export const metadata: Metadata = {
@@ -69,7 +71,9 @@ export default async function RootLayout({
                 defaultMode={themeConfig.defaultMode}
               >
                 <SettingsDrawer defaultSettings={defaultSettings} />
-                {children}
+                <MainLayout>
+                  {children}
+                </MainLayout>
               </ThemeProvider>
             </LocalizationProvider>
           </SettingsProvider>

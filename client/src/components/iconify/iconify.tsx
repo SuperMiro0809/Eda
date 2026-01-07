@@ -1,17 +1,23 @@
 'use client';
 
 import { useId } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon, IconProps } from '@iconify/react';
 import { mergeClasses } from 'minimal-shared/utils';
 
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 
 import { iconifyClasses } from './classes';
 import { allIconNames, registerIcons } from './register-icons';
 
 // ----------------------------------------------------------------------
 
-export function Iconify({ className, icon, width = 20, height, sx, ...other }) {
+export interface IconifyProps extends IconProps {
+  className?: string,
+  icon: string,
+  sx?: SxProps<Theme>
+}
+
+export function Iconify({ className, icon, width = 20, height, sx, ...other }: IconifyProps) {
   const id = useId();
 
   if (!allIconNames.includes(icon)) {

@@ -9,6 +9,7 @@ import { NavSectionMini, NavSectionVertical } from '@/components/nav-section';
 
 import { layoutClasses } from '../core/classes';
 import { NavToggleButton } from '../components/nav-toggle-button';
+import { NavAuthCard } from '../components/nav-auth-card';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +40,8 @@ export function NavVertical({
           checkPermissions={checkPermissions}
           sx={{ px: 2, flex: '1 1 auto' }}
         />
+
+        <NavAuthCard />
       </Scrollbar>
     </>
   );

@@ -11,9 +11,9 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 import { allLangs } from '@/locales';
 
 import { useChat } from '@/chat';
-import { Iconify } from '@/components/iconify';
-// import { Logo } from 'src/components/logo';
+import { Logo } from '@/components/logo';
 import { useSettingsContext } from '@/components/settings';
+import { SvgColor } from '@/components/svg-color';
 
 import { NavMobile } from './nav-mobile';
 import { VerticalDivider } from './content';
@@ -52,7 +52,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
         {
           title: 'New Chat',
           path: '/chat',
-          icon: <Iconify icon="solar:add-circle-linear" />,
+          icon: <SvgColor src='/assets/icons/navbar/ic_new_chat.svg' />,
         },
       ],
     },
@@ -63,7 +63,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
             items: sessions.map((session) => ({
               title: session.title,
               path: `/chat/${session.id}`,
-              icon: <Iconify icon="solar:chat-round-line-linear" />,
+              icon: <SvgColor src='/assets/icons/navbar/ic_chat.svg' />,
             })),
           },
         ]
@@ -127,14 +127,14 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
           />
 
           {/** @slot Logo */}
-          {/* {isNavHorizontal && (
+          {isNavHorizontal && (
             <Logo
               sx={{
                 display: 'none',
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
               }}
             />
-          )} */}
+          )}
 
           {/** @slot Divider */}
           {isNavHorizontal && (

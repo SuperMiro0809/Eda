@@ -13,6 +13,8 @@ import { I18nProvider } from '@/locales/i18n-provider';
 import { detectSettings } from '@/components/settings/server';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from '@/components/settings';
 
+import { AuthProvider } from '@/auth';
+import { ChatProvider } from '@/chat';
 import { MainLayout } from '@/layouts/main/layout';
 
 // ----------------------------------------------------------------------
@@ -70,10 +72,14 @@ export default async function RootLayout({
                 modeStorageKey={themeConfig.modeStorageKey}
                 defaultMode={themeConfig.defaultMode}
               >
-                <SettingsDrawer defaultSettings={defaultSettings} />
-                <MainLayout>
-                  {children}
-                </MainLayout>
+                <AuthProvider>
+                  <ChatProvider>
+                    <SettingsDrawer defaultSettings={defaultSettings} />
+                    <MainLayout>
+                      {children}
+                    </MainLayout>
+                  </ChatProvider>
+                </AuthProvider>
               </ThemeProvider>
             </LocalizationProvider>
           </SettingsProvider>

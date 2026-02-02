@@ -10,6 +10,8 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 
 import { allLangs } from '@/locales';
 
+import { useChat } from '@/chat';
+import { Iconify } from '@/components/iconify';
 // import { Logo } from 'src/components/logo';
 import { useSettingsContext } from '@/components/settings';
 
@@ -28,7 +30,6 @@ import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
 
-import { navData as dashboardNavData } from '../nav-config-dashboard';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 
 // ----------------------------------------------------------------------
@@ -36,35 +37,50 @@ import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg' }) {
   const theme = useTheme();
 
-  const user = {
-    id: '8864c717-587d-472a-929a-8e5f298024da-0',
-    displayName: 'Jaydon Frankie',
-    email: 'demo@minimals.cc',
-    photoURL: null,
-    phoneNumber: null,
-    country: null,
-    address: '90210 Broadway Blvd',
-    state: 'California',
-    city: 'San Francisco',
-    zipCode: '94116',
-    about: 'Praesent turpis. Phasellus viverra nulla ut metus varius laoreet. Phasellus tempus.',
-    role: 'admin',
-    isPublic: true,
-  };
-
   const settings = useSettingsContext();
+  const { sessions } = useChat();
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const navData = slotProps?.nav?.data ?? dashboardNavData;
+  // Generate nav data with dynamic chat history
+  const chatNavData = [
+    {
+      subheader: 'Overview',
+      items: [
+        {
+          title: 'New Chat',
+          path: '/chat',
+          icon: <Iconify icon="solar:add-circle-linear" />,
+        },
+      ],
+    },
+    ...(sessions.length > 0
+      ? [
+          {
+            subheader: 'History',
+            items: sessions.map((session) => ({
+              title: session.title,
+              path: `/chat/${session.id}`,
+              icon: <Iconify icon="solar:chat-round-line-linear" />,
+            })),
+          },
+        ]
+      : []),
+  ];
+
+  const navData = slotProps?.nav?.data ?? chatNavData;
 
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.state.navLayout === 'vertical';
 
-  const canDisplayItemByRole = (allowedRoles) => !allowedRoles?.includes(user?.role);
+  // Role-based filtering (returns true to show item, false to hide)
+  const canDisplayItemByRole = (allowedRoles: string[] | undefined) => {
+    if (!allowedRoles) return true;
+    return true; // Show all items for now, add role logic later
+  };
 
   const renderHeader = () => {
     const headerSlotProps = {

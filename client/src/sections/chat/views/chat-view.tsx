@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 
+import { useChat } from '@/chat';
 import { Iconify } from '@/components/iconify';
 
 import { MessageList, ChatInput } from '@/components/chat';
 import { ChatContainer, WelcomeSection, SuggestionChip } from '@/components/chat/styles';
-import { Message } from '@/components/chat/types';
+import type { Message } from '@/components/chat/types';
 
 // ----------------------------------------------------------------------
 
@@ -33,45 +34,86 @@ function generateId(): string {
 
 // ----------------------------------------------------------------------
 
-export function ChatView() {
-  const [messages, setMessages] = useState<Message[]>([]);
+interface ChatViewProps {
+  sessionId?: string;
+}
+
+export function ChatView({ sessionId }: ChatViewProps) {
+  const {
+    sessions,
+    currentSession,
+    currentSessionId,
+    createSession,
+    setCurrentSession,
+    addMessage,
+  } = useChat();
+
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const sendMessage = useCallback((content: string) => {
-    if (!content.trim()) return;
+  // Set current session based on sessionId prop
+  useEffect(() => {
+    if (sessionId) {
+      // Load existing session
+      const exists = sessions.find((s) => s.id === sessionId);
+      if (exists) {
+        setCurrentSession(sessionId);
+      }
+    } else {
+      // New chat page - clear current session to show welcome
+      setCurrentSession(null);
+    }
+  }, [sessionId, sessions, setCurrentSession]);
 
-    const userMessage: Message = {
-      id: generateId(),
-      role: 'user',
-      content: content.trim(),
-      timestamp: new Date(),
-    };
+  const messages = currentSession?.messages ?? [];
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
+  const sendMessage = useCallback(
+    (content: string) => {
+      if (!content.trim()) return;
 
-    setTimeout(() => {
-      const responseIndex = Math.floor(Math.random() * mockResponses.length);
-      const botMessage: Message = {
+      // Create session if none exists
+      let activeSessionId = currentSessionId;
+      if (!activeSessionId) {
+        activeSessionId = createSession();
+      }
+
+      const userMessage: Message = {
         id: generateId(),
-        role: 'assistant',
-        content: mockResponses[responseIndex],
+        role: 'user',
+        content: content.trim(),
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1200);
-  }, []);
+
+      addMessage(activeSessionId, userMessage);
+      setInputValue('');
+      setIsTyping(true);
+
+      // Simulate bot response (replace with actual AI call)
+      setTimeout(() => {
+        const responseIndex = Math.floor(Math.random() * mockResponses.length);
+        const botMessage: Message = {
+          id: generateId(),
+          role: 'assistant',
+          content: mockResponses[responseIndex],
+          timestamp: new Date(),
+        };
+        addMessage(activeSessionId!, botMessage);
+        setIsTyping(false);
+      }, 1200);
+    },
+    [currentSessionId, createSession, addMessage]
+  );
 
   const handleSend = useCallback(() => {
     sendMessage(inputValue);
   }, [inputValue, sendMessage]);
 
-  const handleSuggestionClick = useCallback((text: string) => {
-    sendMessage(text);
-  }, [sendMessage]);
+  const handleSuggestionClick = useCallback(
+    (text: string) => {
+      sendMessage(text);
+    },
+    [sendMessage]
+  );
 
   const showWelcome = messages.length === 0;
 
@@ -97,7 +139,8 @@ export function ChatView() {
             How can I help you today?
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 480 }}>
-            I'm Eda, your guide to Bulgarian university applications. Ask me anything about admissions, programs, or the application process.
+            I'm Eda, your guide to Bulgarian university applications. Ask me anything about
+            admissions, programs, or the application process.
           </Typography>
           <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1.5}>
             {suggestions.map((suggestion) => (

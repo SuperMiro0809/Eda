@@ -57,6 +57,39 @@ const ICONS = {
  */
 export const navData = [
   /**
+   * Chat
+   */
+  {
+    subheader: '',
+    items: [
+      {
+        title: 'New Chat',
+        path: '/chat',
+        icon: <Iconify icon="solar:add-circle-linear" />,
+      },
+    ],
+  },
+  {
+    subheader: 'History',
+    items: [
+      {
+        title: 'University requirements...',
+        path: '/chat/abc123',
+        icon: <Iconify icon="solar:chat-round-line-linear" />,
+      },
+      {
+        title: 'Application deadlines...',
+        path: '/chat/def456',
+        icon: <Iconify icon="solar:chat-round-line-linear" />,
+      },
+      {
+        title: 'Tuition fees question',
+        path: '/chat/ghi789',
+        icon: <Iconify icon="solar:chat-round-line-linear" />,
+      },
+    ],
+  },
+  /**
    * Overview
    */
   {
@@ -77,7 +110,7 @@ export const navData = [
   {
     subheader: 'Management',
     items: [
-      
+
     ],
   },
 ];

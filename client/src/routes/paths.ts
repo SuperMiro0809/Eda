@@ -33,6 +33,10 @@ export const paths = {
     checkout: `/product/checkout`,
     details: (id: number) => `/product/${id}`
   },
+  chat: {
+    root: `/chat`,
+    details: (id: number | string) => `/chat/${id}`,
+  },
   // AUTH
   auth: {
     amplify: {
@@ -81,7 +85,6 @@ export const paths = {
   dashboard: {
     root: ROOTS.DASHBOARD,
     mail: `${ROOTS.DASHBOARD}/mail`,
-    chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,

@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+
 import { useChat } from '@/chat';
 import { Iconify } from '@/components/iconify';
 
@@ -40,7 +43,6 @@ interface ChatViewProps {
 
 export function ChatView({ sessionId }: ChatViewProps) {
   const {
-    sessions,
     currentSession,
     currentSessionId,
     createSession,
@@ -48,22 +50,23 @@ export function ChatView({ sessionId }: ChatViewProps) {
     addMessage,
   } = useChat();
 
+  const router = useRouter();
+
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
   // Set current session based on sessionId prop
+  // Only run when sessionId changes, not when sessions array updates
   useEffect(() => {
     if (sessionId) {
       // Load existing session
-      const exists = sessions.find((s) => s.id === sessionId);
-      if (exists) {
-        setCurrentSession(sessionId);
-      }
+      setCurrentSession(sessionId);
     } else {
       // New chat page - clear current session to show welcome
       setCurrentSession(null);
     }
-  }, [sessionId, sessions, setCurrentSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId]);
 
   const messages = currentSession?.messages ?? [];
 
@@ -71,8 +74,9 @@ export function ChatView({ sessionId }: ChatViewProps) {
     (content: string) => {
       if (!content.trim()) return;
 
-      // Create session if none exists
       let activeSessionId = currentSessionId;
+      const isNewSession = !activeSessionId;
+
       if (!activeSessionId) {
         activeSessionId = createSession();
       }
@@ -99,9 +103,13 @@ export function ChatView({ sessionId }: ChatViewProps) {
         };
         addMessage(activeSessionId!, botMessage);
         setIsTyping(false);
+
+        if (isNewSession) {
+          router.replace(paths.chat.details(activeSessionId));
+        }
       }, 1200);
     },
-    [currentSessionId, createSession, addMessage]
+    [currentSessionId, createSession, addMessage, router]
   );
 
   const handleSend = useCallback(() => {

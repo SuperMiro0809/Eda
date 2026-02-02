@@ -31,7 +31,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
           )}
         </Bubble>
-        <Timestamp isUser={isUser}>{formatTime(message.timestamp)}</Timestamp>
+        <Timestamp isUser={isUser}>{formatTime(new Date(message.timestamp))}</Timestamp>
       </BubbleContainer>
     </MessageRow>
   );

@@ -75,9 +75,7 @@ export default async function RootLayout({
                 <AuthProvider>
                   <ChatProvider>
                     <SettingsDrawer defaultSettings={defaultSettings} />
-                    <MainLayout>
-                      {children}
-                    </MainLayout>
+                    {children}
                   </ChatProvider>
                 </AuthProvider>
               </ThemeProvider>

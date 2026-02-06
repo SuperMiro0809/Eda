@@ -1,13 +1,14 @@
 // ----------------------------------------------------------------------
 
-export const fallbackLng = 'en';
-export const languages = ['en'];
+export const fallbackLng = 'bg';
+export const languages = ['bg', 'en'];
 export const defaultNS = 'common';
+export const allNamespaces = ['common', 'auth', 'navbar', 'forms', 'validation', 'messages'];
 export const cookieName = 'i18next';
 
 // ----------------------------------------------------------------------
 
-export function i18nOptions(lng = fallbackLng, ns = defaultNS) {
+export function i18nOptions(lng = fallbackLng, ns = allNamespaces) {
   return {
     // debug: true,
     lng,

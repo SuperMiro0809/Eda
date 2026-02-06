@@ -13,7 +13,7 @@ import { fallbackLng, changeLangMessages as messages } from './locales-config';
 
 // ----------------------------------------------------------------------
 
-export function useTranslate(ns) {
+export function useTranslate(ns?: string | string[]) {
   const router = useRouter();
 
   const { t, i18n } = useTranslation(ns);

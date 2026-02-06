@@ -1,19 +1,11 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+import { getUserAction, loginAction, registerAction, logoutAction } from '@/actions/auth';
 
 import { AuthContext } from './auth-context';
 import type { User } from '../types';
-
-// ----------------------------------------------------------------------
-
-// Mock user for development
-const MOCK_USER: User = {
-  id: 'user-001',
-  displayName: 'Demo User',
-  email: 'demo@eda.bg',
-  photoURL: undefined,
-};
 
 // ----------------------------------------------------------------------
 
@@ -23,34 +15,70 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const login = useCallback(() => {
-    setIsLoading(true);
-    // Simulate login delay
-    setTimeout(() => {
-      setUser(MOCK_USER);
-      setIsLoading(false);
-    }, 500);
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const res = await getUserAction();
+
+        if (res?.error) throw res.error;
+
+        const resData = res.data;
+
+        setUser(resData?.user ?? null);
+      } catch (error) {
+        console.error(error);
+        setUser(null);
+      }
+    }
+
+    init();
+  }, [])
+
+  const login = useCallback(async (email: string, password: string) => {
+    const reqData = {
+      email,
+      password
+    };
+
+    const res = await loginAction(reqData);
+
+    if (res?.error) throw res.error;
+
+    const resData = res.data;
+    setUser(resData?.user ?? null);
   }, []);
 
-  const logout = useCallback(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setUser(null);
-      setIsLoading(false);
-    }, 300);
+  const register = useCallback(async (firstName: string, familyName: string, email: string, password: string) => {
+    const reqData = {
+      firstName,
+      familyName,
+      email,
+      password
+    };
+
+    const res = await registerAction(reqData);
+
+    if (res?.error) throw res.error;
+
+    const resData = res.data;
+    setUser(resData?.user ?? null);
+  }, []);
+
+  const logout = useCallback(async () => {
+    await logoutAction();
+    setUser(null);
   }, []);
 
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: !!user,
-      isLoading,
       login,
+      register,
       logout,
     }),
-    [user, isLoading, login, logout]
+    [user, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

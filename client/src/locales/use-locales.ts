@@ -13,6 +13,8 @@ import { fallbackLng, changeLangMessages as messages } from './locales-config';
 
 // ----------------------------------------------------------------------
 
+type LangKey = keyof typeof messages;
+
 export function useTranslate(ns?: string | string[]) {
   const router = useRouter();
 
@@ -23,11 +25,11 @@ export function useTranslate(ns?: string | string[]) {
   const currentLang = allLangs.find((lang) => lang.value === i18n.resolvedLanguage);
 
   const onChangeLang = useCallback(
-    async (newLang) => {
+    async (newLang: string) => {
       try {
         const langChangePromise = i18n.changeLanguage(newLang);
 
-        const currentMessages = messages[newLang] || messages.en;
+        const currentMessages = messages[newLang as LangKey] || messages.en;
 
         toast.promise(langChangePromise, {
           loading: currentMessages.loading,

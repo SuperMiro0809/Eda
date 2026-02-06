@@ -15,6 +15,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
@@ -29,6 +30,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } catch (error) {
         console.error(error);
         setUser(null);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -74,11 +77,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       user,
       isAuthenticated: !!user,
+      isLoading,
       login,
       register,
       logout,
     }),
-    [user, login, register, logout]
+    [user, isLoading, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

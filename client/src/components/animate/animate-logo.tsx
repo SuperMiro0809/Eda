@@ -1,13 +1,23 @@
 import { m } from 'framer-motion';
 import { varAlpha } from 'minimal-shared/utils';
 
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 
 // import { Logo } from '../logo';
 
 // ----------------------------------------------------------------------
 
-export function AnimateLogoZoom({ logo, slotProps, sx, ...other }) {
+interface AnimateLogoProps {
+  logo?: React.ReactNode;
+  slotProps?: {
+    logo?: {
+      sx?: SxProps<Theme>;
+    };
+  };
+  sx?: SxProps<Theme>;
+}
+
+export function AnimateLogoZoom({ logo, slotProps, sx, ...other }: AnimateLogoProps) {
   return (
     <LogoZoomRoot sx={sx} {...other}>
       <m.span
@@ -69,32 +79,22 @@ const LogoZoomPrimaryOutline = styled(m.span)(({ theme }) => ({
   position: 'absolute',
   width: 'calc(100% - 20px)',
   height: 'calc(100% - 20px)',
-  border: `solid 3px ${varAlpha(theme.vars.palette.primary.darkChannel, 0.24)}`,
+  border: `solid 3px ${varAlpha(theme.vars?.palette.primary.darkChannel ?? theme.palette.primary.dark, 0.24)}`,
 }));
 
 const LogoZoomSecondaryOutline = styled(m.span)(({ theme }) => ({
   width: '100%',
   height: '100%',
   position: 'absolute',
-  border: `solid 8px ${varAlpha(theme.vars.palette.primary.darkChannel, 0.24)}`,
+  border: `solid 8px ${varAlpha(theme.vars?.palette.primary.darkChannel ?? theme.palette.primary.dark, 0.24)}`,
 }));
 
 // ----------------------------------------------------------------------
 
-export function AnimateLogoRotate({ logo, sx, slotProps, ...other }) {
+export function AnimateLogoRotate({ logo, sx, slotProps, ...other }: AnimateLogoProps) {
   return (
     <LogoRotateRoot sx={sx} {...other}>
-      {logo ?? (
-        <Logo
-          {...slotProps?.logo}
-          sx={[
-            { zIndex: 9, width: 40, height: 40 },
-            ...(Array.isArray(slotProps?.logo?.sx)
-              ? (slotProps?.logo?.sx ?? [])
-              : [slotProps?.logo?.sx]),
-          ]}
-        />
-      )}
+      {logo}
 
       <LogoRotateBackground
         animate={{ rotate: 360 }}
@@ -119,7 +119,7 @@ const LogoRotateBackground = styled(m.span)(({ theme }) => ({
   opacity: 0.16,
   borderRadius: '50%',
   position: 'absolute',
-  backgroundImage: `linear-gradient(135deg, transparent 50%, ${theme.vars.palette.primary.main} 100%)`,
+  backgroundImage: `linear-gradient(135deg, transparent 50%, ${theme.vars?.palette.primary.main ?? theme.palette.primary.main} 100%)`,
   transition: theme.transitions.create(['opacity'], {
     easing: theme.transitions.easing.easeInOut,
     duration: theme.transitions.duration.shorter,

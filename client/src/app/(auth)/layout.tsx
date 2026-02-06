@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthLayout } from '@/layouts/auth';
+import { GuestGuard } from '@/auth/guards';
 
 export default function Layout({
   children,
@@ -8,6 +9,8 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthLayout>{children}</AuthLayout>
+    <GuestGuard>
+      <AuthLayout>{children}</AuthLayout>
+    </GuestGuard>
   );
 }

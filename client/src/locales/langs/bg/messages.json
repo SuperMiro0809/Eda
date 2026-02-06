@@ -1,3 +1,4 @@
 {
-  "account-already-exists": "Акаунт с този имейл вече съществува"
+  "account-already-exists": "Акаунт с този имейл вече съществува",
+  "register-success": "Регистрацията е успешна! Добре дошли в Eda."
 }

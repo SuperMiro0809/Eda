@@ -4,15 +4,18 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
+import { alpha, SxProps } from '@mui/material/styles';
+
+import { paths } from '@/routes/paths';
+import { RouterLink } from '@/routes/components';
 
 import { useAuth } from '@/auth/hooks/use-auth';
 import { Iconify } from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function NavAuthCard({ sx, ...other }) {
-  const { user, isAuthenticated, login, logout } = useAuth();
+export function NavAuthCard({ sx, ...other }: { sx: SxProps }) {
+  const { user, isAuthenticated, logout } = useAuth();
 
   // Not authenticated - show login prompt
   if (!isAuthenticated) {
@@ -68,10 +71,11 @@ export function NavAuthCard({ sx, ...other }) {
         </Typography>
 
         <Button
+          component={RouterLink}
+          href={paths.auth.login}
           fullWidth
           variant="contained"
           color="primary"
-          onClick={login}
           startIcon={<Iconify icon="solar:login-2-bold" width={20} />}
         >
           Sign In
@@ -97,11 +101,11 @@ export function NavAuthCard({ sx, ...other }) {
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
+          // src={user?.photoURL}
+          alt={user?.full_name}
           sx={{ width: 40, height: 40, bgcolor: 'primary.main' }}
         >
-          {user?.displayName?.charAt(0).toUpperCase()}
+          {user?.full_name?.charAt(0).toUpperCase()}
         </Avatar>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -110,7 +114,7 @@ export function NavAuthCard({ sx, ...other }) {
             noWrap
             sx={{ color: 'var(--layout-nav-text-primary-color)' }}
           >
-            {user?.displayName}
+            {user?.full_name}
           </Typography>
 
           <Typography

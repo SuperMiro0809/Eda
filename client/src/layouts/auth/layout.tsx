@@ -9,6 +9,8 @@ import { useResponsive } from '@/hooks/use-responsive';
 import { bgGradient } from '@/theme/core/mixins/background';
 // components
 import { Logo } from '@/components/logo';
+// locales
+import { useTranslate } from '@/locales';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +23,12 @@ type AuthLayoutProps = {
 
 export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps) {
   const theme = useTheme();
+  const { t } = useTranslate();
 
   const upMd = useResponsive('up', 'md');
+
+  const defaultTitle = t('welcome_title', { ns: 'auth' });
+  const defaultSubtitle = t('welcome_subtitle', { ns: 'auth' });
 
   const renderLogo = (
     <Logo
@@ -64,18 +70,18 @@ export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps
         }),
       }}
     >
-      <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center', mb: 0.3  }}>
-        {title || 'Hi, Welcome back'}
+      <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center', mb: 0.3 }}>
+        {title || defaultTitle}
       </Typography>
-      <Typography variant="subtitle1" sx={{ maxWidth: 480, textAlign: 'center', mt: 0.3, mb: 0.3  }}>
-        {subtitle || 'Login to access the system features'}
+      <Typography variant="subtitle1" sx={{ maxWidth: 480, textAlign: 'center', mt: 0.3, mb: 0.3, color: 'text.secondary' }}>
+        {subtitle || defaultSubtitle}
       </Typography>
 
       <Box
         component="img"
         alt="auth"
-        src={image || '/assets/illustrations/illustration_dashboard.png'}
-        sx={{ maxWidth: 720 }}
+        src={image || '/assets/illustrations/3.svg'}
+        sx={{ maxHeight: 580, mt: 3 }}
       />
     </Stack>
   );

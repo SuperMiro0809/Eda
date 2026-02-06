@@ -1,3 +1,4 @@
 {
-  "account-already-exists": "An account with this email already exists"
+  "account-already-exists": "An account with this email already exists",
+  "register-success": "Registration successful! Welcome to Eda."
 }

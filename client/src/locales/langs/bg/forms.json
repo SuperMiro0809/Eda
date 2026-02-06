@@ -1,4 +1,6 @@
 {
   "email": "Имейл",
-  "password": "Парола"
+  "password": "Парола",
+  "first_name": "Първо име",
+  "family_name": "Фамилно име"
 }

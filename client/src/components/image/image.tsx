@@ -1,0 +1,148 @@
+import { forwardRef, ReactElement } from 'react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - no types available for this package
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+// @mui
+import { alpha, useTheme, SxProps, Theme } from '@mui/material/styles';
+import Box, { BoxProps } from '@mui/material/Box';
+//
+import { getRatio } from './utils';
+
+// ----------------------------------------------------------------------
+
+type ImageRatio = '4/3' | '3/4' | '6/4' | '4/6' | '16/9' | '9/16' | '21/9' | '9/21' | '1/1';
+
+interface ImageProps extends Omit<BoxProps, 'placeholder'> {
+  ratio?: ImageRatio;
+  overlay?: string;
+  disabledEffect?: boolean;
+  alt?: string;
+  src?: string;
+  afterLoad?: () => void;
+  delayTime?: number;
+  threshold?: number;
+  beforeLoad?: () => void;
+  delayMethod?: 'debounce' | 'throttle';
+  placeholder?: ReactElement;
+  wrapperProps?: object;
+  scrollPosition?: { x: number; y: number };
+  effect?: 'blur' | 'black-and-white' | 'opacity';
+  visibleByDefault?: boolean;
+  wrapperClassName?: string;
+  useIntersectionObserver?: boolean;
+  imageSx?: SxProps<Theme>;
+}
+
+const Image = forwardRef<HTMLSpanElement, ImageProps>(
+  (
+    {
+      ratio,
+      overlay,
+      disabledEffect = false,
+      //
+      alt,
+      src,
+      afterLoad,
+      delayTime,
+      threshold,
+      beforeLoad,
+      delayMethod,
+      placeholder,
+      wrapperProps,
+      scrollPosition,
+      effect = 'blur',
+      visibleByDefault,
+      wrapperClassName,
+      useIntersectionObserver,
+      sx,
+      imageSx = {},
+      ...other
+    },
+    ref
+  ) => {
+    const theme = useTheme();
+
+    const overlayStyles = !!overlay && {
+      '&:before': {
+        content: "''",
+        top: 0,
+        left: 0,
+        width: 1,
+        height: 1,
+        zIndex: 1,
+        position: 'absolute',
+        background: overlay || alpha(theme.palette.grey[900], 0.48),
+      },
+    };
+
+    const content = (
+      <Box
+        component={LazyLoadImage}
+        //
+        alt={alt}
+        src={src}
+        afterLoad={afterLoad}
+        delayTime={delayTime}
+        threshold={threshold}
+        beforeLoad={beforeLoad}
+        delayMethod={delayMethod}
+        placeholder={placeholder}
+        wrapperProps={wrapperProps}
+        scrollPosition={scrollPosition}
+        visibleByDefault={visibleByDefault}
+        effect={disabledEffect ? undefined : effect}
+        useIntersectionObserver={useIntersectionObserver}
+        wrapperClassName={wrapperClassName || 'component-image-wrapper'}
+        placeholderSrc={disabledEffect ? '/assets/transparent.png' : '/assets/placeholder.svg'}
+        //
+        sx={{
+          width: 1,
+          height: 1,
+          objectFit: 'cover',
+          verticalAlign: 'bottom',
+          ...(!!ratio && {
+            top: 0,
+            left: 0,
+            position: 'absolute',
+          }),
+          ...imageSx
+        }}
+      />
+    );
+
+    return (
+      <Box
+        ref={ref}
+        component="span"
+        className="component-image"
+        sx={{
+          overflow: 'hidden',
+          position: 'relative',
+          verticalAlign: 'bottom',
+          display: 'inline-block',
+          ...(!!ratio && {
+            width: 1,
+          }),
+          '& span.component-image-wrapper': {
+            width: 1,
+            height: 1,
+            verticalAlign: 'bottom',
+            backgroundSize: 'cover !important',
+            ...(!!ratio && {
+              pt: getRatio(ratio),
+            }),
+          },
+          ...overlayStyles,
+          ...sx,
+        }}
+        {...other}
+      >
+        {content}
+      </Box>
+    );
+  }
+);
+
+Image.displayName = 'Image';
+
+export default Image;

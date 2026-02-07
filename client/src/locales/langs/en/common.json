@@ -2,5 +2,9 @@
   "and": "and",
   "terms_of_service": "Terms of Service",
   "privacy_policy": "Privacy Policy",
-  "disclaim": "By signing up, you agree to the"
+  "disclaim": "By signing up, you agree to the",
+  "save_changes": "Save changes",
+  "delete_user": "Delete user",
+  "allowed_formats": "Allowed *.jpeg, *.jpg, *.png, *.gif",
+  "max_size": "max size of {{size}}"
 }

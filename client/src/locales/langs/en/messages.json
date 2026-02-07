@@ -1,4 +1,6 @@
 {
   "account-already-exists": "An account with this email already exists",
-  "register-success": "Registration successful! Welcome to Eda."
+  "register-success": "Registration successful! Welcome to Eda.",
+  "update-success": "Update successful!",
+  "error-occurred": "An error occurred. Please try again."
 }

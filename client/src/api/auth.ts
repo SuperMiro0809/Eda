@@ -22,6 +22,7 @@ export type User = {
   family_name: string;
   full_name: string;
   email: string;
+  avatar?: string;
 };
 
 export type AuthResponse = {

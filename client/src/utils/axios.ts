@@ -61,4 +61,9 @@ export const endpoints = {
     register: '/auth/register',
     logout: '/auth/logout'
   },
+  user: {
+    profile: '/user/profile',
+    password: '/user/password',
+    avatar: '/user/avatar',
+  },
 }

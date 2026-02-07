@@ -16,6 +16,7 @@ export interface ChatContextValue {
   currentSessionId: string | null;
   currentSession: ChatSession | null;
   isLoading: boolean;
+  isAuthenticated: boolean;
   // Actions
   createSession: () => string;
   deleteSession: (id: string) => void;

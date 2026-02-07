@@ -11,7 +11,7 @@ import { layoutClasses } from '../core/classes';
 
 // ----------------------------------------------------------------------
 
-export function DashboardContent({
+export function MainContent({
   sx,
   children,
   className,

@@ -2,12 +2,15 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 
+import { useAuth } from '@/auth/hooks/use-auth';
+
 import { ChatContext } from './chat-context';
 import type { ChatSession, Message } from '../types';
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'eda-chat-sessions';
+const GUEST_SESSION_KEY = 'eda-guest-chat';
 
 function generateId(): string {
   return `chat-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -30,34 +33,67 @@ interface ChatProviderProps {
 }
 
 export function ChatProvider({ children }: ChatProviderProps) {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load sessions from localStorage on mount
+  // Load sessions based on auth status
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as ChatSession[];
-        setSessions(parsed);
+    if (authLoading) return;
+
+    if (isAuthenticated) {
+      // Authenticated: load from localStorage (TODO: load from backend API)
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored) as ChatSession[];
+          setSessions(parsed);
+        }
+      } catch (error) {
+        console.error('Failed to load chat sessions:', error);
       }
-    } catch (error) {
-      console.error('Failed to load chat sessions:', error);
+    } else {
+      // Guest: start with empty session or restore temporary guest session
+      try {
+        const guestSession = sessionStorage.getItem(GUEST_SESSION_KEY);
+        if (guestSession) {
+          const parsed = JSON.parse(guestSession) as ChatSession;
+          setSessions([parsed]);
+          setCurrentSessionId(parsed.id);
+        }
+      } catch (error) {
+        console.error('Failed to load guest session:', error);
+      }
     }
     setIsLoading(false);
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
-  // Save sessions to localStorage whenever they change
+  // Save sessions based on auth status
   useEffect(() => {
-    if (!isLoading) {
+    if (isLoading || authLoading) return;
+
+    if (isAuthenticated) {
+      // Authenticated: save to localStorage (TODO: sync with backend API)
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
       } catch (error) {
         console.error('Failed to save chat sessions:', error);
       }
+    } else {
+      // Guest: save single session to sessionStorage (cleared on browser close)
+      try {
+        if (sessions.length > 0) {
+          sessionStorage.setItem(GUEST_SESSION_KEY, JSON.stringify(sessions[0]));
+        } else {
+          sessionStorage.removeItem(GUEST_SESSION_KEY);
+        }
+      } catch (error) {
+        console.error('Failed to save guest session:', error);
+      }
     }
-  }, [sessions, isLoading]);
+  }, [sessions, isLoading, isAuthenticated, authLoading]);
 
   const currentSession = useMemo(
     () => sessions.find((s) => s.id === currentSessionId) ?? null,
@@ -74,10 +110,18 @@ export function ChatProvider({ children }: ChatProviderProps) {
       createdAt: now,
       updatedAt: now,
     };
-    setSessions((prev) => [newSession, ...prev]);
+
+    if (isAuthenticated) {
+      // Authenticated users can have multiple sessions
+      setSessions((prev) => [newSession, ...prev]);
+    } else {
+      // Guests can only have one session - replace existing
+      setSessions([newSession]);
+    }
+
     setCurrentSessionId(id);
     return id;
-  }, []);
+  }, [isAuthenticated]);
 
   const deleteSession = useCallback((id: string) => {
     setSessions((prev) => prev.filter((s) => s.id !== id));
@@ -130,6 +174,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
       currentSessionId,
       currentSession,
       isLoading,
+      isAuthenticated,
       createSession,
       deleteSession,
       setCurrentSession,
@@ -142,6 +187,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
       currentSessionId,
       currentSession,
       isLoading,
+      isAuthenticated,
       createSession,
       deleteSession,
       setCurrentSession,

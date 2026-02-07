@@ -8,7 +8,7 @@ import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import { iconButtonClasses } from '@mui/material/IconButton';
 
-import { allLangs } from '@/locales';
+import { allLangs, useTranslate } from '@/locales';
 
 import { useChat } from '@/chat';
 import { Logo } from '@/components/logo';
@@ -37,26 +37,29 @@ import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg' }) {
   const theme = useTheme();
 
+  const { t } = useTranslate();
+
   const settings = useSettingsContext();
-  const { sessions } = useChat();
+  const { sessions, isAuthenticated } = useChat();
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
   // Generate nav data with dynamic chat history
+  // Only show history for authenticated users
   const chatNavData = [
     {
-      subheader: 'Overview',
+      subheader: '',
       items: [
         {
-          title: 'New Chat',
+          title: t('new-chat', { ns: 'chat' }),
           path: '/chat',
           icon: <SvgColor src='/assets/icons/navbar/ic_new_chat.svg' />,
         },
       ],
     },
-    ...(sessions.length > 0
+    ...(isAuthenticated && sessions.length > 0
       ? [
           {
             subheader: 'History',

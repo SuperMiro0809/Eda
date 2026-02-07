@@ -3,7 +3,7 @@
 export const fallbackLng = 'bg';
 export const languages = ['bg', 'en'];
 export const defaultNS = 'common';
-export const allNamespaces = ['common', 'auth', 'navbar', 'forms', 'validation', 'messages'];
+export const allNamespaces = ['common', 'auth', 'navbar', 'forms', 'validation', 'messages', 'chat'];
 export const cookieName = 'i18next';
 
 // ----------------------------------------------------------------------

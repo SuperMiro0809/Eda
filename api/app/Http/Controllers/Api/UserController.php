@@ -56,6 +56,19 @@ class UserController extends Controller
 
     public function updatePassword(Request $request): JsonResponse
     {
+        $currUser = $request->user();
 
+        $validated = $request->validate([
+            'oldPassword' => 'required|string|current_password',
+            'newPassword' => 'required|string|min:6|confirmed',
+        ]);
+
+        $currUser->update([
+            'password' => bcrypt($validated['newPassword']),
+        ]);
+
+        return response()->json([
+            'message' => 'Password updated successfully'
+        ], 200);
     }
 }

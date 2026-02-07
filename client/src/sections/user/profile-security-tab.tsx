@@ -55,11 +55,13 @@ export default function ProfileSecurityTab() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    const { oldPassword, newPassword, confirmNewPassword } = data;
+
     try {
       const res = await changePasswordAction({
-        old_password: data.oldPassword,
-        new_password: data.newPassword,
-        new_password_confirmation: data.confirmNewPassword,
+        oldPassword,
+        newPassword,
+        newPassword_confirmation: confirmNewPassword,
       });
 
       if (res?.error) {

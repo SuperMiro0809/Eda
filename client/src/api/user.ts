@@ -14,7 +14,7 @@ export type UpdateProfileData = {
 export type ChangePasswordData = {
   oldPassword: string;
   newPassword: string;
-  newPasswordConfirmation: string;
+  newPassword_confirmation: string;
 };
 
 export type UserResponse = {

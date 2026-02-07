@@ -151,7 +151,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
           <SettingsButton />
 
           {/** @slot Account drawer */}
-          <AccountDrawer data={_account} />
+          {/* <AccountDrawer data={_account} /> */}
         </Box>
       ),
     };

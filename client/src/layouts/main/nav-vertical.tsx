@@ -69,6 +69,8 @@ export function NavVertical({
         ]}
       />
 
+      <NavAuthCard mini />
+
       {slots?.bottomArea}
     </>
   );

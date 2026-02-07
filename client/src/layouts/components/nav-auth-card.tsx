@@ -3,19 +3,112 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { alpha, SxProps } from '@mui/material/styles';
+import { alpha, SxProps, Theme } from '@mui/material/styles';
 
 import { paths } from '@/routes/paths';
 import { RouterLink } from '@/routes/components';
 
 import { useAuth } from '@/auth/hooks/use-auth';
 import { Iconify } from '@/components/iconify';
+import { AnimateBorder } from '@/components/animate';
 
 // ----------------------------------------------------------------------
 
-export function NavAuthCard({ sx, ...other }: { sx: SxProps }) {
+interface NavAuthCardProps {
+  sx?: SxProps<Theme>;
+  mini?: boolean;
+}
+
+export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
   const { user, isAuthenticated, logout } = useAuth();
+
+  // Mini version for collapsed nav
+  if (mini) {
+    if (!isAuthenticated) {
+      return (
+        <Box
+          sx={[
+            {
+              display: 'flex',
+              justifyContent: 'center',
+              pb: 2,
+            },
+            ...(Array.isArray(sx) ? sx : [sx]),
+          ]}
+          {...other}
+        >
+          <Tooltip title="Sign in" placement="right">
+            <IconButton
+              component={RouterLink}
+              href={paths.auth.login}
+              sx={{
+                width: 40,
+                height: 40,
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                color: 'primary.main',
+                '&:hover': {
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+                },
+              }}
+            >
+              <Iconify icon="solar:login-2-bold" width={20} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      );
+    }
+
+    return (
+      <Box
+        sx={[
+          {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
+            pb: 2,
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+        {...other}
+      >
+        <Tooltip title={user?.full_name} placement="right">
+          <AnimateBorder
+            sx={{ p: '2px', borderRadius: '50%', width: 40, height: 40 }}
+            slotProps={{
+              primaryBorder: { size: 50, width: '1px', sx: { color: 'primary.main' } },
+              secondaryBorder: { sx: { color: 'warning.main' } },
+            }}
+          >
+            <Avatar
+              alt={user?.full_name}
+              sx={{ width: 1, height: 1, bgcolor: 'primary.main', fontSize: 14 }}
+            >
+              {user?.full_name?.charAt(0).toUpperCase()}
+            </Avatar>
+          </AnimateBorder>
+        </Tooltip>
+
+        <Tooltip title="Logout" placement="right">
+          <IconButton
+            onClick={logout}
+            size="small"
+            sx={{
+              color: 'var(--layout-nav-text-secondary-color)',
+              '&:hover': {
+                bgcolor: (theme) => alpha(theme.palette.grey[500], 0.16),
+              },
+            }}
+          >
+            <Iconify icon="solar:logout-2-outline" width={18} />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  }
 
   // Not authenticated - show login prompt
   if (!isAuthenticated) {
@@ -100,13 +193,20 @@ export function NavAuthCard({ sx, ...other }: { sx: SxProps }) {
       {...other}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Avatar
-          // src={user?.photoURL}
-          alt={user?.full_name}
-          sx={{ width: 40, height: 40, bgcolor: 'primary.main' }}
+        <AnimateBorder
+          sx={{ p: '3px', borderRadius: '50%', width: 44, height: 44 }}
+          slotProps={{
+            primaryBorder: { size: 60, width: '1px', sx: { color: 'primary.main' } },
+            secondaryBorder: { sx: { color: 'warning.main' } },
+          }}
         >
-          {user?.full_name?.charAt(0).toUpperCase()}
-        </Avatar>
+          <Avatar
+            alt={user?.full_name}
+            sx={{ width: 1, height: 1, bgcolor: 'primary.main' }}
+          >
+            {user?.full_name?.charAt(0).toUpperCase()}
+          </Avatar>
+        </AnimateBorder>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography

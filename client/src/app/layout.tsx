@@ -12,6 +12,7 @@ import { I18nProvider } from '@/locales/i18n-provider';
 
 import { detectSettings } from '@/components/settings/server';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from '@/components/settings';
+import { Snackbar } from '@/components/snackbar';
 
 import { AuthProvider } from '@/auth';
 import { ChatProvider } from '@/chat';
@@ -74,6 +75,7 @@ export default async function RootLayout({
               >
                 <AuthProvider>
                   <ChatProvider>
+                    <Snackbar />
                     <SettingsDrawer defaultSettings={defaultSettings} />
                     {children}
                   </ChatProvider>

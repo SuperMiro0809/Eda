@@ -15,6 +15,8 @@ import { useAuth } from '@/auth/hooks/use-auth';
 import { Iconify } from '@/components/iconify';
 import { AnimateBorder } from '@/components/animate';
 
+import { CONFIG } from '@/global-config';
+
 // ----------------------------------------------------------------------
 
 interface NavAuthCardProps {
@@ -76,20 +78,27 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
         {...other}
       >
         <Tooltip title={user?.full_name} placement="right">
-          <AnimateBorder
-            sx={{ p: '2px', borderRadius: '50%', width: 40, height: 40 }}
-            slotProps={{
-              primaryBorder: { size: 50, width: '1px', sx: { color: 'primary.main' } },
-              secondaryBorder: { sx: { color: 'warning.main' } },
-            }}
+          <Box
+            component={RouterLink}
+            href={paths.user.profile}
+            sx={{ textDecoration: 'none', cursor: 'pointer' }}
           >
-            <Avatar
-              alt={user?.full_name}
-              sx={{ width: 1, height: 1, bgcolor: 'primary.main', fontSize: 14 }}
+            <AnimateBorder
+              sx={{ p: '2px', borderRadius: '50%', width: 40, height: 40 }}
+              slotProps={{
+                primaryBorder: { size: 50, width: '1px', sx: { color: 'primary.main' } },
+                secondaryBorder: { sx: { color: 'warning.main' } },
+              }}
             >
-              {user?.full_name?.charAt(0).toUpperCase()}
-            </Avatar>
-          </AnimateBorder>
+              <Avatar
+                alt={user?.full_name}
+                src={user?.avatar ? `${CONFIG.assetsDir}/${user.avatar}` : undefined}
+                sx={{ width: 1, height: 1, fontSize: 14 }}
+              >
+                {user?.full_name?.charAt(0).toUpperCase()}
+              </Avatar>
+            </AnimateBorder>
+          </Box>
         </Tooltip>
 
         <Tooltip title="Logout" placement="right">
@@ -193,37 +202,52 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
       {...other}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <AnimateBorder
-          sx={{ p: '3px', borderRadius: '50%', width: 44, height: 44 }}
-          slotProps={{
-            primaryBorder: { size: 60, width: '1px', sx: { color: 'primary.main' } },
-            secondaryBorder: { sx: { color: 'warning.main' } },
+        <Box
+          component={RouterLink}
+          href={paths.user.profile}
+          sx={{
+            textDecoration: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            flex: 1,
+            minWidth: 0,
           }}
         >
-          <Avatar
-            alt={user?.full_name}
-            sx={{ width: 1, height: 1, bgcolor: 'primary.main' }}
+          <AnimateBorder
+            sx={{ p: '3px', borderRadius: '50%', width: 44, height: 44 }}
+            slotProps={{
+              primaryBorder: { size: 60, width: '1px', sx: { color: 'primary.main' } },
+              secondaryBorder: { sx: { color: 'warning.main' } },
+            }}
           >
-            {user?.full_name?.charAt(0).toUpperCase()}
-          </Avatar>
-        </AnimateBorder>
+            <Avatar
+              alt={user?.full_name}
+              src={user?.avatar ? `${CONFIG.assetsDir}/${user.avatar}` : undefined}
+              sx={{ width: 1, height: 1 }}
+            >
+              {user?.full_name?.charAt(0).toUpperCase()}
+            </Avatar>
+          </AnimateBorder>
 
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography
-            variant="subtitle2"
-            noWrap
-            sx={{ color: 'var(--layout-nav-text-primary-color)' }}
-          >
-            {user?.full_name}
-          </Typography>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="subtitle2"
+              noWrap
+              sx={{ color: 'var(--layout-nav-text-primary-color)' }}
+            >
+              {user?.full_name}
+            </Typography>
 
-          <Typography
-            variant="caption"
-            noWrap
-            sx={{ color: 'var(--layout-nav-text-disabled-color)' }}
-          >
-            {user?.email}
-          </Typography>
+            <Typography
+              variant="caption"
+              noWrap
+              sx={{ color: 'var(--layout-nav-text-disabled-color)' }}
+            >
+              {user?.email}
+            </Typography>
+          </Box>
         </Box>
 
         <Button

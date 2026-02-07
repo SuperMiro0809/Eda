@@ -297,7 +297,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
           </Box>
 
           {(isNavColorVisible || isNavLayoutVisible) && renderNav()}
-          {isPrimaryColorVisible && renderPresets()}
+          {/* {isPrimaryColorVisible && renderPresets()} */}
           {(isFontFamilyVisible || isFontSizeVisible) && renderFont()}
         </Box>
       </Scrollbar>

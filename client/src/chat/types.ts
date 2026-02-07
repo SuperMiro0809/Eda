@@ -22,6 +22,7 @@ export interface ChatContextValue {
   deleteSession: (id: string) => void;
   setCurrentSession: (id: string | null) => void;
   addMessage: (sessionId: string, message: Message) => void;
+  updateMessage: (sessionId: string, messageId: string, content: string) => void;
   updateSessionTitle: (sessionId: string, title: string) => void;
   clearHistory: () => void;
 }

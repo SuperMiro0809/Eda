@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,14 +15,9 @@ import { Iconify } from '@/components/iconify';
 import { MessageList, ChatInput } from '@/components/chat';
 import { ChatContainer, WelcomeSection, SuggestionChip } from '@/components/chat/styles';
 import type { Message } from '@/components/chat/types';
+import { streamChat, type ChatMessage } from '@/utils/chat-stream';
 
 // ----------------------------------------------------------------------
-
-const mockResponses = [
-  "Bulgarian universities typically require:\n\n- **Secondary school diploma** (or equivalent)\n- **Entrance exams** for certain programs\n- **Language proficiency** (Bulgarian or English)\n- **Application documents** including transcripts and ID\n\nWould you like details about a specific university?",
-  "The application deadlines vary by university:\n\n1. **Winter semester**: July-August\n2. **Summer semester**: January-February\n\nI recommend checking the specific university's website for exact dates. Which university interests you?",
-  "Popular programs for international students include:\n\n- **Medicine & Dentistry** (English-taught)\n- **Engineering** at Technical University of Sofia\n- **Business & Economics** at UNWE\n- **IT & Computer Science** at Sofia University\n\nWhat field are you interested in?",
-];
 
 const suggestions = [
   { text: 'What are the admission requirements?', icon: 'solar:document-text-linear' },
@@ -48,6 +43,7 @@ export function ChatView({ sessionId }: ChatViewProps) {
     createSession,
     setCurrentSession,
     addMessage,
+    updateMessage,
   } = useChat();
 
   const router = useRouter();
@@ -55,14 +51,22 @@ export function ChatView({ sessionId }: ChatViewProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
+  // Track streaming content
+  const streamContentRef = useRef('');
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   // Set current session based on sessionId prop
-  // Only run when sessionId changes, not when sessions array updates
   useEffect(() => {
     if (sessionId) {
-      // Load existing session
       setCurrentSession(sessionId);
     } else {
-      // New chat page - clear current session to show welcome
       setCurrentSession(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,24 +96,50 @@ export function ChatView({ sessionId }: ChatViewProps) {
       setInputValue('');
       setIsTyping(true);
 
-      // Simulate bot response (replace with actual AI call)
-      setTimeout(() => {
-        const responseIndex = Math.floor(Math.random() * mockResponses.length);
-        const botMessage: Message = {
-          id: generateId(),
-          role: 'assistant',
-          content: mockResponses[responseIndex],
-          timestamp: new Date(),
-        };
-        addMessage(activeSessionId!, botMessage);
-        setIsTyping(false);
+      // Create assistant message placeholder
+      const assistantMessageId = generateId();
+      const assistantMessage: Message = {
+        id: assistantMessageId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+      };
+      addMessage(activeSessionId, assistantMessage);
 
-        if (isNewSession) {
-          router.replace(paths.chat.details(activeSessionId));
-        }
-      }, 1200);
+      // Reset stream content
+      streamContentRef.current = '';
+
+      // Build message history for context
+      const chatMessages: ChatMessage[] = [
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+        { role: 'user' as const, content: content.trim() },
+      ];
+
+      // Start streaming
+      const finalSessionId = activeSessionId;
+      abortControllerRef.current = streamChat(chatMessages, {
+        onChunk: (chunk) => {
+          streamContentRef.current += chunk;
+          updateMessage(finalSessionId, assistantMessageId, streamContentRef.current);
+        },
+        onDone: () => {
+          setIsTyping(false);
+          if (isNewSession) {
+            router.replace(paths.chat.details(finalSessionId));
+          }
+        },
+        onError: (error) => {
+          console.error('Chat stream error:', error);
+          updateMessage(
+            finalSessionId,
+            assistantMessageId,
+            'Sorry, I encountered an error. Please try again.'
+          );
+          setIsTyping(false);
+        },
+      });
     },
-    [currentSessionId, createSession, addMessage, router]
+    [currentSessionId, createSession, addMessage, updateMessage, messages, router]
   );
 
   const handleSend = useCallback(() => {

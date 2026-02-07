@@ -8,6 +8,7 @@ export const CONFIG = {
   appName: 'Minimal UI',
   appVersion: packageJson.version,
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? '',
+  aiServerUrl: process.env.NEXT_PUBLIC_AI_SERVER_URL ?? 'http://localhost:8001',
   assetsDir: process.env.NEXT_PUBLIC_ASSETS_DIR ?? '',
   isStaticExport: JSON.parse(process.env.BUILD_STATIC_EXPORT ?? 'false'),
   /**

@@ -153,6 +153,22 @@ export function ChatProvider({ children }: ChatProviderProps) {
     );
   }, []);
 
+  const updateMessage = useCallback((sessionId: string, messageId: string, content: string) => {
+    setSessions((prev) =>
+      prev.map((session) => {
+        if (session.id !== sessionId) return session;
+
+        return {
+          ...session,
+          messages: session.messages.map((msg) =>
+            msg.id === messageId ? { ...msg, content } : msg
+          ),
+          updatedAt: new Date().toISOString(),
+        };
+      })
+    );
+  }, []);
+
   const updateSessionTitle = useCallback((sessionId: string, title: string) => {
     setSessions((prev) =>
       prev.map((session) =>
@@ -179,6 +195,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
       deleteSession,
       setCurrentSession,
       addMessage,
+      updateMessage,
       updateSessionTitle,
       clearHistory,
     }),
@@ -192,6 +209,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
       deleteSession,
       setCurrentSession,
       addMessage,
+      updateMessage,
       updateSessionTitle,
       clearHistory,
     ]

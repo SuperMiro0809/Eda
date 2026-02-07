@@ -36,22 +36,22 @@ class ChatSessionController extends Controller
         ], 201);
     }
 
-    public function show(Request $request, ChatSession $chatSession): JsonResponse
+    public function show(Request $request, ChatSession $session): JsonResponse
     {
-        if ($chatSession->user_id !== $request->user()->id) {
+        if ($session->user_id !== $request->user()->id) {
             abort(403, 'Unauthorized');
         }
 
-        $chatSession->load('messages');
+        $session->load('messages');
 
         return response()->json([
-            'session' => $chatSession,
+            'session' => $session,
         ]);
     }
 
-    public function update(Request $request, ChatSession $chatSession): JsonResponse
+    public function update(Request $request, ChatSession $session): JsonResponse
     {
-        if ($chatSession->user_id !== $request->user()->id) {
+        if ($session->user_id !== $request->user()->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -59,20 +59,20 @@ class ChatSessionController extends Controller
             'title' => 'required|string|max:255',
         ]);
 
-        $chatSession->update($validated);
+        $session->update($validated);
 
         return response()->json([
-            'session' => $chatSession,
+            'session' => $session,
         ]);
     }
 
-    public function destroy(Request $request, ChatSession $chatSession): JsonResponse
+    public function destroy(Request $request, ChatSession $session): JsonResponse
     {
-        if ($chatSession->user_id !== $request->user()->id) {
+        if ($session->user_id !== $request->user()->id) {
             abort(403, 'Unauthorized');
         }
 
-        $chatSession->delete();
+        $session->delete();
 
         return response()->json([
             'message' => 'Session deleted successfully',

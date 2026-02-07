@@ -7,7 +7,7 @@ import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { CONFIG } from '@/global-config';
 import { LocalizationProvider } from '@/locales';
 import { detectLanguage } from '@/locales/server';
-import { themeConfig, ThemeProvider } from '@/theme';
+import { themeConfig, themeOverrides, ThemeProvider } from '@/theme';
 import { I18nProvider } from '@/locales/i18n-provider';
 
 import { detectSettings } from '@/components/settings/server';

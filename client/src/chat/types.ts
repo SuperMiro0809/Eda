@@ -18,11 +18,12 @@ export interface ChatContextValue {
   isLoading: boolean;
   isAuthenticated: boolean;
   // Actions
-  createSession: () => string;
-  deleteSession: (id: string) => void;
+  createSession: () => Promise<string>;
+  deleteSession: (id: string) => Promise<void>;
   setCurrentSession: (id: string | null) => void;
-  addMessage: (sessionId: string, message: Message) => void;
+  addMessage: (sessionId: string, message: Message) => Promise<string>;
   updateMessage: (sessionId: string, messageId: string, content: string) => void;
-  updateSessionTitle: (sessionId: string, title: string) => void;
-  clearHistory: () => void;
+  saveMessageContent: (sessionId: string, messageId: string, content: string) => Promise<void>;
+  updateSessionTitle: (sessionId: string, title: string) => Promise<void>;
+  clearHistory: () => Promise<void>;
 }

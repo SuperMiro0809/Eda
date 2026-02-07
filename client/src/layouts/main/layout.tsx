@@ -32,9 +32,19 @@ import { LanguagePopover } from '../components/language-popover';
 
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 
+import type { Breakpoint } from '@mui/material/styles';
+
 // ----------------------------------------------------------------------
 
-export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg' }) {
+type MainLayoutProps = {
+  children: React.ReactNode;
+  sx?: any;
+  cssVars?: any;
+  slotProps?: any;
+  layoutQuery?: Breakpoint;
+};
+
+export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg' }: MainLayoutProps) {
   const theme = useTheme();
 
   const { t } = useTranslate();
@@ -108,6 +118,8 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
       ),
       bottomArea: isNavHorizontal ? (
         <NavHorizontal
+          sx={{}}
+          className=""
           data={navData}
           layoutQuery={layoutQuery}
           cssVars={navVars.section}
@@ -122,6 +134,9 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
             sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
           />
           <NavMobile
+            sx={{}}
+            className=""
+            slots={{}}
             data={navData}
             open={open}
             onClose={onClose}
@@ -173,6 +188,9 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
 
   const renderSidebar = () => (
     <NavVertical
+      sx={{}}
+      className=""
+      slots={{}}
       data={navData}
       isNavMini={isNavMini}
       layoutQuery={layoutQuery}

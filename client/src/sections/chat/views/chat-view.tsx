@@ -44,6 +44,7 @@ export function ChatView({ sessionId }: ChatViewProps) {
     setCurrentSession,
     addMessage,
     updateMessage,
+    saveMessageContent,
   } = useChat();
 
   const router = useRouter();
@@ -51,8 +52,9 @@ export function ChatView({ sessionId }: ChatViewProps) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  // Track streaming content
+  // Track streaming content and message ID
   const streamContentRef = useRef('');
+  const assistantMessageIdRef = useRef<string>('');
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Cleanup on unmount
@@ -75,14 +77,14 @@ export function ChatView({ sessionId }: ChatViewProps) {
   const messages = currentSession?.messages ?? [];
 
   const sendMessage = useCallback(
-    (content: string) => {
+    async (content: string) => {
       if (!content.trim()) return;
 
       let activeSessionId = currentSessionId;
       const isNewSession = !activeSessionId;
 
       if (!activeSessionId) {
-        activeSessionId = createSession();
+        activeSessionId = await createSession();
       }
 
       const userMessage: Message = {
@@ -92,19 +94,22 @@ export function ChatView({ sessionId }: ChatViewProps) {
         timestamp: new Date(),
       };
 
-      addMessage(activeSessionId, userMessage);
+      await addMessage(activeSessionId, userMessage);
       setInputValue('');
       setIsTyping(true);
 
       // Create assistant message placeholder
-      const assistantMessageId = generateId();
+      const localAssistantMessageId = generateId();
       const assistantMessage: Message = {
-        id: assistantMessageId,
+        id: localAssistantMessageId,
         role: 'assistant',
         content: '',
         timestamp: new Date(),
       };
-      addMessage(activeSessionId, assistantMessage);
+
+      // Add message and get server ID
+      const serverMessageId = await addMessage(activeSessionId, assistantMessage);
+      assistantMessageIdRef.current = serverMessageId;
 
       // Reset stream content
       streamContentRef.current = '';
@@ -120,10 +125,18 @@ export function ChatView({ sessionId }: ChatViewProps) {
       abortControllerRef.current = streamChat(chatMessages, {
         onChunk: (chunk) => {
           streamContentRef.current += chunk;
-          updateMessage(finalSessionId, assistantMessageId, streamContentRef.current);
+          updateMessage(finalSessionId, serverMessageId, streamContentRef.current);
         },
-        onDone: () => {
+        onDone: async () => {
           setIsTyping(false);
+          // Save the final streamed content to database
+          if (streamContentRef.current) {
+            await saveMessageContent(
+              finalSessionId,
+              assistantMessageIdRef.current,
+              streamContentRef.current
+            );
+          }
           if (isNewSession) {
             router.replace(paths.chat.details(finalSessionId));
           }
@@ -132,14 +145,14 @@ export function ChatView({ sessionId }: ChatViewProps) {
           console.error('Chat stream error:', error);
           updateMessage(
             finalSessionId,
-            assistantMessageId,
+            serverMessageId,
             'Sorry, I encountered an error. Please try again.'
           );
           setIsTyping(false);
         },
       });
     },
-    [currentSessionId, createSession, addMessage, updateMessage, messages, router]
+    [currentSessionId, createSession, addMessage, updateMessage, saveMessageContent, messages, router]
   );
 
   const handleSend = useCallback(() => {

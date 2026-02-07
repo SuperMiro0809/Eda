@@ -67,4 +67,18 @@ export const endpoints = {
     avatar: '/user/avatar',
     delete: '/user',
   },
+  chat: {
+    sessions: {
+      list: '/chat/sessions',
+      create: '/chat/sessions',
+      show: (id: string) => `/chat/sessions/${id}`,
+      update: (id: string) => `/chat/sessions/${id}`,
+      delete: (id: string) => `/chat/sessions/${id}`,
+    },
+    messages: {
+      list: (sessionId: string) => `/chat/sessions/${sessionId}/messages`,
+      create: (sessionId: string) => `/chat/sessions/${sessionId}/messages`,
+      update: (sessionId: string, messageId: string) => `/chat/sessions/${sessionId}/messages/${messageId}`,
+    },
+  }
 }

@@ -68,8 +68,6 @@ export function streamChat(
 
         let currentEvent = '';
 
-        console.log(lines);
-
         for (const line of lines) {
           if (line.startsWith('event:')) {
             currentEvent = line.slice(6).trim();

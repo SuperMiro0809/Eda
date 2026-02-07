@@ -24,4 +24,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('chat/sessions/{chatSession}/messages', [MessageController::class, 'index']);
     Route::post('chat/sessions/{chatSession}/messages', [MessageController::class, 'store']);
+    Route::put('chat/sessions/{chatSession}/messages/{message}', [MessageController::class, 'update']);
 });

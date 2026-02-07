@@ -7,6 +7,8 @@ import Tabs from '@mui/material/Tabs';
 
 import { MainContent } from '@/layouts/main';
 
+import { useTranslate } from '@/locales';
+
 import { Iconify } from '@/components/iconify';
 
 import ProfileGeneralTab from '../profile-general-tab';
@@ -15,16 +17,18 @@ import ProfileSecurityTab from '../profile-security-tab';
 // ----------------------------------------------------------------------
 
 export default function ProfileView() {
+  const { t } = useTranslate();
+
   const [currentTab, setCurrentTab] = useState('general');
 
   const NAV_ITEMS = [
     {
-      label: 'General',
+      label: t('general-info', { ns: 'common' }),
       icon: <Iconify width={24} icon="solar:user-id-bold" />,
       value: 'general',
     },
     {
-      label: 'Security',
+      label: t('security', { ns: 'common' }),
       icon: <Iconify width={24} icon="ic:round-vpn-key" />,
       value: 'security',
     },

@@ -65,5 +65,6 @@ export const endpoints = {
     profile: '/user/profile',
     password: '/user/password',
     avatar: '/user/avatar',
+    delete: '/user',
   },
 }

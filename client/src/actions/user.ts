@@ -5,6 +5,7 @@ import {
   changePassword,
   uploadAvatar,
   deleteAvatar,
+  deleteAccount,
   UpdateProfileData,
   ChangePasswordData,
 } from '@/api/user';
@@ -27,4 +28,8 @@ export async function uploadAvatarAction(formData: FormData) {
 
 export async function deleteAvatarAction() {
   return await deleteAvatar();
+}
+
+export async function deleteAccountAction() {
+  return await deleteAccount();
 }

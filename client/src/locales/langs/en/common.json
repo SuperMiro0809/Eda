@@ -5,6 +5,11 @@
   "disclaim": "By signing up, you agree to the",
   "save_changes": "Save changes",
   "delete_user": "Delete user",
+  "delete_user_warning": "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.",
+  "delete": "Delete",
+  "cancel": "Cancel",
   "allowed_formats": "Allowed *.jpeg, *.jpg, *.png, *.gif",
-  "max_size": "max size of {{size}}"
+  "max_size": "max size of {{size}}",
+  "general-info": "General",
+  "security": "Security"
 }

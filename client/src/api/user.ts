@@ -81,3 +81,13 @@ export async function deleteAvatar(): Promise<MessageResponse> {
     return { error: extractErrorMessage(error) };
   }
 }
+
+export async function deleteAccount(): Promise<MessageResponse> {
+  try {
+    const res = await axios.delete(endpoints.user.delete);
+
+    return { status: res.status, data: res.data };
+  } catch (error) {
+    return { error: extractErrorMessage(error) };
+  }
+}

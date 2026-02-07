@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [UserController::class, 'update']);
     Route::post('/user/avatar', [UserController::class, 'uploadAvatar']);
     Route::put('/user/password', [UserController::class, 'updatePassword']);
+    Route::delete('/user', [UserController::class, 'destroy']);
 
     Route::apiResource('chat/sessions', ChatSessionController::class);
 

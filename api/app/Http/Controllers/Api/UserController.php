@@ -43,7 +43,9 @@ class UserController extends Controller
         $currUser = $request->user();
 
         if($avatar_photo = $request->file('avatar')) {
-            Storage::delete('public/' . $currUser->avatar);
+            if ($currUser->avatar) {
+                Storage::disk('public')->delete($currUser->avatar);
+            }
             $newAvatar = $avatar_photo->store('users/' . $currUser->id, 'public');
 
             $currUser->update(['avatar' => $newAvatar]);
@@ -69,6 +71,26 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Password updated successfully'
+        ], 200);
+    }
+
+    public function destroy(Request $request): JsonResponse
+    {
+        $currUser = $request->user();
+
+        // Delete user avatar if exists
+        if ($currUser->avatar) {
+            Storage::disk('public')->delete($currUser->avatar);
+        }
+
+        // Revoke all tokens
+        $currUser->tokens()->delete();
+
+        // Delete user
+        $currUser->delete();
+
+        return response()->json([
+            'message' => 'Account deleted successfully'
         ], 200);
     }
 }

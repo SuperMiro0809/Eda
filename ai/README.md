@@ -7,17 +7,17 @@ AI-powered chat service for ЕСКИЗ (Bulgarian university application system)
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Client Request                          │
-│                    POST /chat { messages }                       │
+│                    POST /chat { messages }                      │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                          main.py                                 │
-│                      FastAPI Application                         │
-│  1. Extract user question from messages                          │
-│  2. Query RAG retriever for relevant context                     │
-│  3. Build system prompt with context                             │
-│  4. Stream response from Ollama LLM                              │
+│                          main.py                                │
+│                      FastAPI Application                        │
+│  1. Extract user question from messages                         │
+│  2. Query RAG retriever for relevant context                    │
+│  3. Build system prompt with context                            │
+│  4. Stream response from Ollama LLM                             │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                 ┌───────────────┴───────────────┐
@@ -41,18 +41,18 @@ RAG (Retrieval-Augmented Generation) ensures the AI responds with accurate infor
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                        INGESTION PIPELINE (Offline)                       │
 │                                                                          │
-│  PDF/DOCX/TXT  →  Loader  →  Chunker  →  Embeddings  →  ChromaDB        │
+│  PDF/DOCX/TXT  →  Loader  →  Chunker  →  Embeddings  →  ChromaDB         │
 │                                                                          │
 │  1. Load documents from data/documents/                                  │
-│  2. Split into 1000-char chunks with 200-char overlap                     │
+│  2. Split into 1000-char chunks with 200-char overlap                    │
 │  3. Generate embeddings using nomic-embed-text                           │
 │  4. Store vectors in ChromaDB for similarity search                      │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                        RETRIEVAL PIPELINE (Runtime)                       │
+│                        RETRIEVAL PIPELINE (Runtime)                      │
 │                                                                          │
-│  User Question  →  Embedding  →  ChromaDB Search  →  Top-K Chunks       │
+│  User Question  →  Embedding  →  ChromaDB Search  →  Top-K Chunks        │
 │                                                                          │
 │  1. User asks: "What is ЕСКИЗ?"                                          │
 │  2. Convert question to embedding vector                                 │

@@ -19,7 +19,7 @@ import type { ChatSession, Message } from '../types';
 
 // ----------------------------------------------------------------------
 
-const DEFAULT_TITLE = 'New conversation';
+export const DEFAULT_TITLE = 'New conversation';
 const GUEST_SESSION_KEY = 'eda-guest-chat';
 
 function generateId(): string {

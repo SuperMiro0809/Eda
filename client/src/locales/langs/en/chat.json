@@ -1,4 +1,9 @@
 {
   "new-chat": "New chat",
-  "ask-about-anything": "Ask anything about ESKIS"
+  "ask-about-anything": "Ask anything about ESKIS",
+
+  "delete-chat": "Delete chat",
+  "delete-chat-warning": "Are you sure you want to delete this chat? Its data will be permanently lost.",
+
+  "rename-chat": "Rename chat"
 }

@@ -3,5 +3,7 @@
   "register-success": "Registration successful! Welcome to Eda.",
   "update-success": "Update successful!",
   "error-occurred": "An error occurred. Please try again.",
-  "account-deleted": "Your account has been deleted."
+  "account-deleted": "Your account has been deleted.",
+  "delete-chat-success": "Chat is deleted successfully.",
+  "chat-rename-success": "Chat is renamed successfully."
 }

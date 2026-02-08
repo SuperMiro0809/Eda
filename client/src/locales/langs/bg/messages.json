@@ -3,5 +3,7 @@
   "register-success": "Регистрацията е успешна! Добре дошли в Eda.",
   "update-success": "Успешно обновяване!",
   "error-occurred": "Възникна грешка. Моля, опитайте отново.",
-  "account-deleted": "Вашият акаунт беше изтрит."
+  "account-deleted": "Вашият акаунт беше изтрит.",
+  "delete-chat-success": "Чатът е изтрит успешно.",
+  "chat-rename-success": "Чатът е преименуван успешно."
 }

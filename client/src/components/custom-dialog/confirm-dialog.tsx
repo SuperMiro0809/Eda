@@ -14,7 +14,7 @@ export interface ConfirmDialogProps extends Omit<DialogProps, 'title' | 'content
   title: ReactNode;
   content?: ReactNode;
   action: ReactNode;
-  onClose: () => void;
+  onClose: (event: MouseEvent) => void;
 }
 
 export function ConfirmDialog({ open, title, action, content, onClose, ...other }: ConfirmDialogProps) {

@@ -11,5 +11,6 @@
   "allowed_formats": "Allowed *.jpeg, *.jpg, *.png, *.gif",
   "max_size": "max size of {{size}}",
   "general-info": "General",
-  "security": "Security"
+  "security": "Security",
+  "rename": "Rename"
 }

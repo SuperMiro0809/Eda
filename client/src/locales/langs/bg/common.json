@@ -11,5 +11,6 @@
   "allowed_formats": "Позволени формати: *.jpeg, *.jpg, *.png, *.gif",
   "max_size": "макс. размер {{size}}",
   "general-info": "Обща информация",
-  "security": "Сигурност"
+  "security": "Сигурност",
+  "rename": "Преименувай"
 }

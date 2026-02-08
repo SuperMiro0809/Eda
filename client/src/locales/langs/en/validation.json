@@ -15,5 +15,8 @@
   },
   "family_name": {
     "required": "Last name is required"
+  },
+  "title": {
+    "required": "Title is required"
   }
 }

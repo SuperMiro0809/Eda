@@ -32,6 +32,8 @@ import { LanguagePopover } from '../components/language-popover';
 
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 
+import { ChatNavOptions } from '@/components/chat';
+
 import type { Breakpoint } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
@@ -77,6 +79,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
               title: session.title,
               path: `/chat/${session.id}`,
               icon: <SvgColor src='/assets/icons/navbar/ic_chat.svg' />,
+              info: <ChatNavOptions sessionId={session.id} sessionTitle={session.title} />
             })),
           },
         ]

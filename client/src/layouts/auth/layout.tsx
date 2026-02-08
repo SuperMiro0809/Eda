@@ -1,16 +1,15 @@
 // @mui
-import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 // hooks
 import { useResponsive } from '@/hooks/use-responsive';
-// theme
-import { bgGradient } from '@/theme/core/mixins/background';
 // components
 import { Logo } from '@/components/logo';
+import { SettingsButton } from '@/layouts/components/settings-button';
 // locales
 import { useTranslate } from '@/locales';
+import { varAlpha } from 'minimal-shared';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +21,6 @@ type AuthLayoutProps = {
 };
 
 export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps) {
-  const theme = useTheme();
   const { t } = useTranslate();
 
   const upMd = useResponsive('up', 'md');
@@ -35,9 +33,23 @@ export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps
       sx={{
         zIndex: 9,
         position: 'absolute',
-        m: { xs: 2, md: 5 },
+        top: { xs: 16, md: 40 },
+        left: { xs: 16, md: 40 },
       }}
     />
+  );
+
+  const renderSettings = (
+    <Box
+      sx={{
+        zIndex: 9,
+        position: 'absolute',
+        top: { xs: 16, md: 40 },
+        right: { xs: 16, md: 40 },
+      }}
+    >
+      <SettingsButton sx={{}} />
+    </Box>
   );
 
   const renderContent = (
@@ -60,15 +72,14 @@ export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps
       alignItems="center"
       justifyContent="center"
       spacing={2}
-      sx={{
-        ...bgGradient({
-          color: alpha(
-            theme.palette.background.default,
-            theme.palette.mode === 'light' ? 0.88 : 0.94
-          ),
-          imgUrl: '/assets/background/overlay_2.jpg',
+      sx={(theme) => ({
+        ...theme.mixins.bgGradient({
+          images: [
+            `linear-gradient(0deg, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)}, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)})`,
+            `url(/assets/background/overlay_2.jpg)`,
+          ],
         }),
-      }}
+      })}
     >
       <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center', mb: 0.3 }}>
         {title || defaultTitle}
@@ -80,7 +91,7 @@ export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps
       <Box
         component="img"
         alt="auth"
-        src={image || '/assets/illustrations/3.svg'}
+        src={image || '/assets/illustrations/ai-assistant.svg'}
         sx={{ maxHeight: 580, mt: 3 }}
       />
     </Stack>
@@ -95,6 +106,8 @@ export function AuthLayout({ children, image, title, subtitle }: AuthLayoutProps
       }}
     >
       {renderLogo}
+
+      {renderSettings}
 
       {upMd && renderSection}
 

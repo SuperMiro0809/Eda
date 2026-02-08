@@ -45,10 +45,10 @@ export function ChatNavOptions({ sessionId, sessionTitle }: { sessionId: string,
     <>
       <IconButton
         color={popover.open ? 'inherit' : 'default'}
-        onClick={(event: React.MouseEvent) => {
+        onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          popover.onOpen(event);
+          popover.onOpen(event as unknown as Event);
         }}
         sx={{ width: 24, height: 24 }}
       >

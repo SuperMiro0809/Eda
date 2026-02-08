@@ -151,6 +151,8 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
       if (res.data?.session) {
         const newSession = transformApiSession(res.data.session);
+        // Mark as loaded to prevent re-fetching (which would overwrite local title updates)
+        loadedSessionsRef.current.add(newSession.id);
         setSessions((prev) => [newSession, ...prev]);
         setCurrentSessionId(newSession.id);
         return newSession.id;

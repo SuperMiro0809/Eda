@@ -159,6 +159,11 @@ export function ChatView({ sessionId }: ChatViewProps) {
     sendMessage(inputValue);
   }, [inputValue, sendMessage]);
 
+  const handleStop = useCallback(() => {
+    abortControllerRef.current?.abort();
+    setIsTyping(false);
+  }, []);
+
   const handleSuggestionClick = useCallback(
     (text: string) => {
       sendMessage(text);
@@ -214,7 +219,9 @@ export function ChatView({ sessionId }: ChatViewProps) {
         value={inputValue}
         onChange={setInputValue}
         onSend={handleSend}
+        onStop={handleStop}
         disabled={isTyping}
+        isGenerating={isTyping}
       />
     </ChatContainer>
   );

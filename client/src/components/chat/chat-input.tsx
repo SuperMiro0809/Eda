@@ -57,7 +57,7 @@ declare global {
 
 // ----------------------------------------------------------------------
 
-export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSend, onStop, disabled, isGenerating }: ChatInputProps) {
   const { t } = useTranslate();
 
   const [isRecording, setIsRecording] = useState(false);
@@ -162,25 +162,42 @@ export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps)
             />
           </IconButton>
         )}
-        <IconButton
-          onClick={onSend}
-          disabled={disabled || !value.trim()}
-          size="small"
-          sx={{
-            bgcolor: value.trim() ? 'grey.900' : 'grey.300',
-            color: value.trim() ? '#fff' : 'grey.500',
-            '&:hover': {
-              bgcolor: 'grey.800',
-            },
-            '&:disabled': {
-              bgcolor: 'grey.200',
-              color: 'grey.400',
-            },
-            transition: 'all 0.2s',
-          }}
-        >
-          <Iconify icon="solar:arrow-up-linear" width={20} />
-        </IconButton>
+        {isGenerating ? (
+          <IconButton
+            onClick={onStop}
+            size="small"
+            sx={{
+              bgcolor: 'error.main',
+              color: '#fff',
+              '&:hover': {
+                bgcolor: 'error.dark',
+              },
+              transition: 'all 0.2s',
+            }}
+          >
+            <Iconify icon="solar:stop-bold" width={20} />
+          </IconButton>
+        ) : (
+          <IconButton
+            onClick={onSend}
+            disabled={disabled || !value.trim()}
+            size="small"
+            sx={{
+              bgcolor: value.trim() ? 'grey.900' : 'grey.300',
+              color: value.trim() ? '#fff' : 'grey.500',
+              '&:hover': {
+                bgcolor: 'grey.800',
+              },
+              '&:disabled': {
+                bgcolor: 'grey.200',
+                color: 'grey.400',
+              },
+              transition: 'all 0.2s',
+            }}
+          >
+            <Iconify icon="solar:arrow-up-linear" width={20} />
+          </IconButton>
+        )}
       </InputCard>
     </InputArea>
   );

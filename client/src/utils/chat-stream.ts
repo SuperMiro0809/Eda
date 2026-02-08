@@ -25,6 +25,7 @@ export function streamChat(
   sessionId?: string
 ): AbortController {
   const controller = new AbortController();
+  let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
 
   const fetchStream = async () => {
     try {
@@ -32,8 +33,6 @@ export function streamChat(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add auth header if needed
-          // 'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           messages,
@@ -46,7 +45,7 @@ export function streamChat(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const reader = response.body?.getReader();
+      reader = response.body?.getReader() ?? null;
       if (!reader) {
         throw new Error('No response body');
       }
@@ -55,7 +54,21 @@ export function streamChat(
       let buffer = '';
 
       while (true) {
+        // Check if aborted before reading
+        if (controller.signal.aborted) {
+          reader.cancel();
+          callbacks.onDone();
+          return;
+        }
+
         const { done, value } = await reader.read();
+
+        // Check if aborted after reading
+        if (controller.signal.aborted) {
+          reader.cancel();
+          callbacks.onDone();
+          return;
+        }
 
         if (done) {
           callbacks.onDone();
@@ -75,7 +88,6 @@ export function streamChat(
           }
 
           if (line.startsWith('data:')) {
-            // SSE format is "data: content" - slice after "data:" and the space
             const rawData = line.slice(5).trimStart();
 
             if (currentEvent === 'done') {
@@ -96,12 +108,10 @@ export function streamChat(
             if (currentEvent === 'message' && rawData) {
               try {
                 const parsed = JSON.parse(rawData);
-                console.log(parsed);
                 if (parsed.content !== undefined) {
                   callbacks.onChunk(parsed.content);
                 }
               } catch {
-                // Fallback: use raw data if not valid JSON
                 callbacks.onChunk(rawData);
               }
             }
@@ -110,9 +120,19 @@ export function streamChat(
       }
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
+        callbacks.onDone();
         return;
       }
       callbacks.onError(error as Error);
+    } finally {
+      // Ensure reader is cancelled on any exit
+      if (reader && controller.signal.aborted) {
+        try {
+          reader.cancel();
+        } catch {
+          // Ignore cancel errors
+        }
+      }
     }
   };
 

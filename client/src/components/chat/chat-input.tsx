@@ -63,40 +63,68 @@ export function ChatInput({ value, onChange, onSend, onStop, disabled, isGenerat
   const [isRecording, setIsRecording] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const onChangeRef = useRef(onChange);
+  const valueRef = useRef(value);
 
+  // Keep refs updated
+  useEffect(() => {
+    onChangeRef.current = onChange;
+    valueRef.current = value;
+  }, [onChange, value]);
+
+  // Initialize speech recognition once
   useEffect(() => {
     const SpeechRecognitionAPI =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     setSpeechSupported(!!SpeechRecognitionAPI);
 
     if (SpeechRecognitionAPI) {
-      recognitionRef.current = new SpeechRecognitionAPI();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'bg-BG'; // Bulgarian as default
+      const recognition = new SpeechRecognitionAPI();
+      recognition.continuous = true; // Keep listening
+      recognition.interimResults = true; // Show interim results
+      recognition.lang = 'bg-BG'; // Bulgarian as default
 
-      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[0][0].transcript;
-        onChange(value ? `${value} ${transcript}` : transcript);
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+
+        // Only update with final results to avoid duplicates
+        if (finalTranscript) {
+          const currentValue = valueRef.current;
+          onChangeRef.current(currentValue ? `${currentValue} ${finalTranscript}` : finalTranscript);
+        }
       };
 
-      recognitionRef.current.onend = () => {
+      recognition.onend = () => {
         setIsRecording(false);
       };
 
-      recognitionRef.current.onerror = () => {
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event);
         setIsRecording(false);
       };
+
+      recognitionRef.current = recognition;
     }
 
     return () => {
       if (recognitionRef.current) {
+        recognitionRef.current.stop();
         recognitionRef.current.onresult = null;
         recognitionRef.current.onend = null;
         recognitionRef.current.onerror = null;
       }
     };
-  }, [onChange, value]);
+  }, []);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -110,14 +138,32 @@ export function ChatInput({ value, onChange, onSend, onStop, disabled, isGenerat
     [onSend, value]
   );
 
+  const handleSendButtonClick = useCallback(
+    () => {
+      if (isRecording && recognitionRef.current) {
+        recognitionRef.current.stop();
+        setIsRecording(false);
+      }
+
+      onSend();
+    },
+    [onSend, isRecording]
+  );
+
   const toggleRecording = useCallback(() => {
     if (!recognitionRef.current) return;
 
     if (isRecording) {
       recognitionRef.current.stop();
+      setIsRecording(false);
     } else {
-      recognitionRef.current.start();
-      setIsRecording(true);
+      try {
+        recognitionRef.current.start();
+        setIsRecording(true);
+      } catch (error) {
+        // Recognition might already be running
+        console.error('Failed to start speech recognition:', error);
+      }
     }
   }, [isRecording]);
 
@@ -179,7 +225,7 @@ export function ChatInput({ value, onChange, onSend, onStop, disabled, isGenerat
           </IconButton>
         ) : (
           <IconButton
-            onClick={onSend}
+            onClick={handleSendButtonClick}
             disabled={disabled || !value.trim()}
             size="small"
             sx={{

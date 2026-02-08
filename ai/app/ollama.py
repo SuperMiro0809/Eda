@@ -24,6 +24,11 @@ async def chat_stream(
         "model": model,
         "messages": messages,
         "stream": True,
+        "options": {
+            "temperature": 0.1,  # Very low temperature for factual responses
+            "top_p": 0.9,
+            "num_ctx": 32768,  # Large context window
+        },
     }
 
     async with httpx.AsyncClient(timeout=300.0) as client:

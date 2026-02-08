@@ -5,6 +5,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 
+import { useTranslate } from '@/locales';
+
 import { Iconify } from '@/components/iconify';
 
 import { InputArea, InputCard } from './styles';
@@ -56,6 +58,8 @@ declare global {
 // ----------------------------------------------------------------------
 
 export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps) {
+  const { t } = useTranslate();
+
   const [isRecording, setIsRecording] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -127,7 +131,7 @@ export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps)
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask anything about Bulgarian universities..."
+          placeholder={`${t('ask-about-anything', { ns: 'chat' })}...`}
           disabled={disabled}
           variant="standard"
           slotProps={{

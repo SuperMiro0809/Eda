@@ -9,10 +9,10 @@ import type { MessageBubbleProps } from './types';
 // ----------------------------------------------------------------------
 
 function formatTime(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('bg-BG', {
     hour: 'numeric',
     minute: '2-digit',
-    hour12: true,
+    hour12: false,
   }).format(date);
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 
 import { useAuth } from '@/auth/hooks/use-auth';
 
@@ -63,6 +63,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const loadedSessionsRef = useRef<Set<string>>(new Set());
 
   // Load sessions from API (authenticated) or sessionStorage (guest)
   useEffect(() => {
@@ -71,6 +72,9 @@ export function ChatProvider({ children }: ChatProviderProps) {
     const loadSessions = async () => {
       if (isAuthenticated) {
         try {
+          // Clear loaded sessions cache on refresh
+          loadedSessionsRef.current.clear();
+
           const res = await getSessionsAction();
           if (res.data?.sessions) {
             const transformedSessions = res.data.sessions.map(transformApiSession);
@@ -122,22 +126,24 @@ export function ChatProvider({ children }: ChatProviderProps) {
   useEffect(() => {
     if (!isAuthenticated || !currentSessionId) return;
 
+    // Skip if already loaded
+    if (loadedSessionsRef.current.has(currentSessionId)) return;
+
     const loadSessionMessages = async () => {
-      const session = sessions.find((s) => s.id === currentSessionId);
-      // Only load if messages haven't been loaded yet
-      if (session && session.messages.length === 0) {
-        const res = await getSessionAction(currentSessionId);
-        if (res.data?.session) {
-          const fullSession = transformApiSession(res.data.session);
-          setSessions((prev) =>
-            prev.map((s) => (s.id === currentSessionId ? fullSession : s))
-          );
-        }
+      // Mark as loading to prevent duplicate requests
+      loadedSessionsRef.current.add(currentSessionId);
+
+      const res = await getSessionAction(currentSessionId);
+      if (res.data?.session) {
+        const fullSession = transformApiSession(res.data.session);
+        setSessions((prev) =>
+          prev.map((s) => (s.id === currentSessionId ? fullSession : s))
+        );
       }
     };
 
     loadSessionMessages();
-  }, [currentSessionId, isAuthenticated, sessions]);
+  }, [currentSessionId, isAuthenticated]);
 
   const createSession = useCallback(async () => {
     if (isAuthenticated) {

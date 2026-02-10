@@ -39,7 +39,7 @@ RAG (Retrieval-Augmented Generation) ensures the AI responds with accurate infor
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                        INGESTION PIPELINE (Offline)                       │
+│                        INGESTION PIPELINE (Offline)                      │
 │                                                                          │
 │  PDF/DOCX/TXT  →  Loader  →  Chunker  →  Embeddings  →  ChromaDB         │
 │                                                                          │

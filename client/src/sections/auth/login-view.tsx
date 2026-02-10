@@ -16,11 +16,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 // routes
 import { paths } from '@/routes/paths';
 import { RouterLink } from '@/routes/components';
-import { useSearchParams, useRouter } from '@/routes/hooks';
 // locales
 import { useTranslate } from '@/locales';
-// config
-import { CONFIG } from '@/global-config';
 // auth
 import { useAuth } from '@/auth/hooks/use-auth';
 // components
@@ -34,13 +31,7 @@ export default function LoginView() {
 
   const { login } = useAuth();
 
-  const router = useRouter();
-
   const [errorMsg, setErrorMsg] = useState('');
-
-  const searchParams = useSearchParams();
-
-  const returnTo = searchParams.get('returnTo');
 
   const password = useBoolean();
 
@@ -67,12 +58,11 @@ export default function LoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await login?.(data.email, data.password);
-
-      router.push(returnTo || CONFIG.auth.redirectPath);
-    } catch (error) {
+      await login?.(data.email, data.password);
+      // GuestGuard will handle redirect once isAuthenticated becomes true
+    } catch (error: any) {
       reset();
-      let message = typeof error === 'string' ? error : error.message;
+      const message = typeof error === 'string' ? error : error?.message || 'Login failed';
       setErrorMsg(message);
     }
   });

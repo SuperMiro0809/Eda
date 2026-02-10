@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).parent.parent
 class Settings(BaseSettings):
     # Ollama
     ollama_host: str = "http://localhost:11434"
-    ollama_model: str = "qwen2.5:7b"  # Fast multilingual model with good Bulgarian support
+    ollama_model: str = "qwen3:8b"  # Fast multilingual model with good Bulgarian support
     embedding_model: str = "nomic-embed-text"
 
     # JWT

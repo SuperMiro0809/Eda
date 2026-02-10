@@ -1,59 +1,336 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Eda API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 12 REST API backend for the Eda AI chatbot application.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Framework**: Laravel 12
+- **Authentication**: Laravel Sanctum (JWT tokens)
+- **Database**: MySQL/PostgreSQL
+- **PHP**: 8.2+
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+api/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       └── Api/
+│   │           ├── AuthController.php      # Authentication endpoints
+│   │           ├── UserController.php      # User profile management
+│   │           ├── ChatSessionController.php # Chat sessions CRUD
+│   │           └── MessageController.php   # Chat messages
+│   │
+│   ├── Models/
+│   │   ├── User.php          # User model
+│   │   ├── ChatSession.php   # Chat session model
+│   │   └── Message.php       # Message model
+│   │
+│   └── Providers/
+│
+├── config/
+│   ├── sanctum.php           # Sanctum configuration
+│   └── cors.php              # CORS settings
+│
+├── database/
+│   ├── migrations/           # Database migrations
+│   └── seeders/              # Database seeders
+│
+├── routes/
+│   └── api.php               # API route definitions
+│
+└── composer.json
+```
 
-## Learning Laravel
+## API Endpoints
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Authentication
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/auth/register` | Register new user | No |
+| POST | `/api/auth/login` | Login user | No |
+| POST | `/api/auth/logout` | Logout user | Yes |
+| GET | `/api/auth/me` | Get current user | Yes |
 
-## Laravel Sponsors
+### User Profile
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| PUT | `/api/user/profile` | Update profile | Yes |
+| POST | `/api/user/avatar` | Upload avatar | Yes |
+| PUT | `/api/user/password` | Change password | Yes |
+| DELETE | `/api/user` | Delete account | Yes |
 
-### Premium Partners
+### Chat Sessions
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/chat/sessions` | List user's sessions | Yes |
+| POST | `/api/chat/sessions` | Create new session | Yes |
+| GET | `/api/chat/sessions/{id}` | Get session with messages | Yes |
+| PUT | `/api/chat/sessions/{id}` | Update session (title) | Yes |
+| DELETE | `/api/chat/sessions/{id}` | Delete session | Yes |
 
-## Contributing
+### Messages
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/chat/sessions/{id}/messages` | List session messages | Yes |
+| POST | `/api/chat/sessions/{id}/messages` | Create message | Yes |
+| PUT | `/api/chat/sessions/{id}/messages/{msgId}` | Update message | Yes |
 
-## Code of Conduct
+## Models
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### User
+```php
+- id: bigint (primary key)
+- name: string
+- email: string (unique)
+- email_verified_at: timestamp (nullable)
+- password: string (hashed)
+- avatar: string (nullable)
+- created_at: timestamp
+- updated_at: timestamp
 
-## Security Vulnerabilities
+// Relationships
+- chatSessions(): HasMany
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### ChatSession
+```php
+- id: uuid (primary key)
+- user_id: bigint (foreign key)
+- title: string (default: "New conversation")
+- created_at: timestamp
+- updated_at: timestamp
 
-## License
+// Relationships
+- user(): BelongsTo
+- messages(): HasMany
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Message
+```php
+- id: uuid (primary key)
+- chat_session_id: uuid (foreign key)
+- role: enum ['user', 'assistant']
+- content: text
+- created_at: timestamp
+- updated_at: timestamp
+
+// Relationships
+- chatSession(): BelongsTo
+```
+
+## Authentication
+
+Uses Laravel Sanctum for API token authentication.
+
+### Login Response
+```json
+{
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "token": "1|abc123..."
+}
+```
+
+### Request Headers
+```
+Authorization: Bearer {token}
+Accept: application/json
+Content-Type: application/json
+```
+
+## Environment Variables
+
+```env
+APP_NAME=Eda
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=eda
+DB_USERNAME=root
+DB_PASSWORD=
+
+SANCTUM_STATEFUL_DOMAINS=localhost:3000
+SESSION_DOMAIN=localhost
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+```
+
+## Getting Started
+
+### Prerequisites
+
+- PHP 8.2+
+- Composer
+- MySQL/PostgreSQL
+
+### Installation
+
+```bash
+# Install dependencies
+composer install
+
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Run migrations
+php artisan migrate
+
+# Start development server
+php artisan serve
+```
+
+### Database Setup
+
+```bash
+# Create database
+mysql -u root -p -e "CREATE DATABASE eda;"
+
+# Run migrations
+php artisan migrate
+
+# Seed with test data (optional)
+php artisan db:seed
+```
+
+## Request/Response Examples
+
+### Register User
+```bash
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "password_confirmation": "password123"
+}
+```
+
+### Create Chat Session
+```bash
+POST /api/chat/sessions
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "title": "My first chat"
+}
+```
+
+Response:
+```json
+{
+  "session": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "My first chat",
+    "created_at": "2024-01-15T10:30:00.000000Z",
+    "updated_at": "2024-01-15T10:30:00.000000Z"
+  }
+}
+```
+
+### Add Message
+```bash
+POST /api/chat/sessions/{sessionId}/messages
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "role": "user",
+  "content": "Hello, how can I apply to a Bulgarian university?"
+}
+```
+
+Response:
+```json
+{
+  "message": {
+    "id": "660e8400-e29b-41d4-a716-446655440001",
+    "role": "user",
+    "content": "Hello, how can I apply to a Bulgarian university?",
+    "created_at": "2024-01-15T10:31:00.000000Z"
+  }
+}
+```
+
+## Error Responses
+
+### Validation Error (422)
+```json
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": ["The email field is required."]
+  }
+}
+```
+
+### Unauthorized (401)
+```json
+{
+  "message": "Unauthenticated."
+}
+```
+
+### Not Found (404)
+```json
+{
+  "message": "Session not found."
+}
+```
+
+## Development
+
+### Running Tests
+```bash
+php artisan test
+```
+
+### Code Style
+```bash
+# Format code with Pint
+./vendor/bin/pint
+```
+
+### Clear Cache
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+```
+
+## CORS Configuration
+
+The API is configured to allow requests from the Next.js frontend. Update `config/cors.php`:
+
+```php
+'allowed_origins' => [env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')],
+'supports_credentials' => true,
+```
+
+## Sanctum Configuration
+
+For SPA authentication, ensure proper domain configuration in `config/sanctum.php`:
+
+```php
+'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:3000')),
+```

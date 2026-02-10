@@ -10,21 +10,21 @@ Eda is a full-stack application that helps foreign students navigate the Bulgari
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                              Eda Application                             │
+│                              Eda Application                            │
 ├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   ┌─────────────┐      ┌─────────────┐      ┌─────────────────────┐    │
-│   │   Client    │      │     API     │      │    AI Service       │    │
-│   │  (Next.js)  │◄────►│  (Laravel)  │      │    (FastAPI)        │    │
-│   │             │      │             │      │                     │    │
-│   │  - Chat UI  │      │  - Auth     │      │  - RAG Pipeline     │    │
-│   │  - Auth     │      │  - Sessions │      │  - Ollama LLM       │    │
-│   │  - i18n     │      │  - Messages │      │  - ChromaDB         │    │
-│   └─────────────┘      └─────────────┘      └─────────────────────┘    │
+│                                                                         │
+│   ┌─────────────┐      ┌─────────────┐      ┌─────────────────────┐     │
+│   │   Client    │      │     API     │      │    AI Service       │     │
+│   │  (Next.js)  │◄────►│  (Laravel)  │      │    (FastAPI)        │     │
+│   │             │      │             │      │                     │     │
+│   │  - Chat UI  │      │  - Auth     │      │  - RAG Pipeline     │     │
+│   │  - Auth     │      │  - Sessions │      │  - Ollama LLM       │     │
+│   │  - i18n     │      │  - Messages │      │  - ChromaDB         │     │
+│   └─────────────┘      └─────────────┘      └─────────────────────┘     │
 │         │                                            │                  │
 │         │              SSE Streaming                 │                  │
 │         └────────────────────────────────────────────┘                  │
-│                                                                          │
+│                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 

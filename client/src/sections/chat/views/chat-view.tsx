@@ -9,6 +9,8 @@ import Stack from '@mui/material/Stack';
 import { paths } from '@/routes/paths';
 import { useRouter } from '@/routes/hooks';
 
+import { useTranslate } from '@/locales';
+
 import { useChat } from '@/chat';
 import { Iconify } from '@/components/iconify';
 
@@ -19,11 +21,11 @@ import { streamChat, type ChatMessage } from '@/utils/chat-stream';
 
 // ----------------------------------------------------------------------
 
-const suggestions = [
-  { text: 'What are the admission requirements?', icon: 'solar:document-text-linear' },
-  { text: 'Application deadlines', icon: 'solar:calendar-linear' },
-  { text: 'Popular programs', icon: 'solar:square-academic-cap-linear' },
-  { text: 'Tuition fees', icon: 'solar:wallet-linear' },
+const SUGGESTIONS = [
+  { key: 'suggestion-requirements', icon: 'solar:document-text-linear' },
+  { key: 'suggestion-deadlines', icon: 'solar:calendar-linear' },
+  { key: 'suggestion-programs', icon: 'solar:square-academic-cap-linear' },
+  { key: 'suggestion-fees', icon: 'solar:wallet-linear' },
 ];
 
 function generateId(): string {
@@ -37,6 +39,8 @@ interface ChatViewProps {
 }
 
 export function ChatView({ sessionId }: ChatViewProps) {
+  const { t } = useTranslate();
+
   const {
     currentSession,
     currentSessionId,
@@ -146,7 +150,7 @@ export function ChatView({ sessionId }: ChatViewProps) {
           updateMessage(
             finalSessionId,
             serverMessageId,
-            'Sorry, I encountered an error. Please try again.'
+            t('error-message', { ns: 'chat' })
           );
           setIsTyping(false);
         },
@@ -192,24 +196,26 @@ export function ChatView({ sessionId }: ChatViewProps) {
             <Iconify icon="solar:chat-round-dots-bold" width={36} sx={{ color: 'white' }} />
           </Box>
           <Typography variant="h4" fontWeight={600} gutterBottom>
-            How can I help you today?
+            {t('welcome-title', { ns: 'chat' })}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 480 }}>
-            I'm Eda, your guide to Bulgarian university applications. Ask me anything about
-            admissions, programs, or the application process.
+            {t('welcome-subtitle', { ns: 'chat' })}
           </Typography>
           <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1.5}>
-            {suggestions.map((suggestion) => (
-              <SuggestionChip
-                key={suggestion.text}
-                onClick={() => handleSuggestionClick(suggestion.text)}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Iconify icon={suggestion.icon} width={18} />
-                  {suggestion.text}
-                </Box>
-              </SuggestionChip>
-            ))}
+            {SUGGESTIONS.map((suggestion) => {
+              const text = t(suggestion.key, { ns: 'chat' });
+              return (
+                <SuggestionChip
+                  key={suggestion.key}
+                  onClick={() => handleSuggestionClick(text)}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Iconify icon={suggestion.icon} width={18} />
+                    {text}
+                  </Box>
+                </SuggestionChip>
+              );
+            })}
           </Stack>
         </WelcomeSection>
       ) : (

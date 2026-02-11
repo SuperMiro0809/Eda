@@ -64,10 +64,23 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const loadedSessionsRef = useRef<Set<string>>(new Set());
+  const prevAuthRef = useRef<boolean | null>(null);
 
   // Load sessions from API (authenticated) or sessionStorage (guest)
   useEffect(() => {
     if (authLoading) return;
+
+    const wasAuthenticated = prevAuthRef.current;
+    prevAuthRef.current = isAuthenticated;
+
+    // Clear state when logging out (was authenticated, now guest)
+    if (wasAuthenticated === true && !isAuthenticated) {
+      setSessions([]);
+      setCurrentSessionId(null);
+      loadedSessionsRef.current.clear();
+      setIsLoading(false);
+      return;
+    }
 
     const loadSessions = async () => {
       if (isAuthenticated) {

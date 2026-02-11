@@ -24,8 +24,7 @@ import { streamChat, type ChatMessage } from '@/utils/chat-stream';
 const SUGGESTIONS = [
   { key: 'suggestion-requirements', icon: 'solar:document-text-linear' },
   { key: 'suggestion-deadlines', icon: 'solar:calendar-linear' },
-  { key: 'suggestion-programs', icon: 'solar:square-academic-cap-linear' },
-  { key: 'suggestion-fees', icon: 'solar:wallet-linear' },
+  { key: 'suggestion-how-to-apply', icon: 'solar:square-academic-cap-linear' },
 ];
 
 function generateId(): string {
@@ -42,8 +41,10 @@ export function ChatView({ sessionId }: ChatViewProps) {
   const { t } = useTranslate();
 
   const {
+    sessions,
     currentSession,
     currentSessionId,
+    isLoading,
     createSession,
     setCurrentSession,
     addMessage,
@@ -77,6 +78,13 @@ export function ChatView({ sessionId }: ChatViewProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
+
+  // Redirect to /chat if sessionId doesn't exist (e.g., after logout)
+  useEffect(() => {
+    if (!isLoading && sessionId && sessions.length === 0) {
+      router.replace(paths.chat.root);
+    }
+  }, [isLoading, sessionId, sessions.length, router]);
 
   const messages = currentSession?.messages ?? [];
 

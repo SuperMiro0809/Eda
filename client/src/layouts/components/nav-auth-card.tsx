@@ -11,6 +11,7 @@ import { alpha, SxProps, Theme } from '@mui/material/styles';
 import { paths } from '@/routes/paths';
 import { RouterLink } from '@/routes/components';
 
+import { useTranslate } from '@/locales';
 import { useAuth } from '@/auth/hooks/use-auth';
 import { Iconify } from '@/components/iconify';
 import { AnimateBorder } from '@/components/animate';
@@ -25,6 +26,7 @@ interface NavAuthCardProps {
 }
 
 export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
+  const { t } = useTranslate();
   const { user, isAuthenticated, logout } = useAuth();
 
   // Mini version for collapsed nav
@@ -42,7 +44,7 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
           ]}
           {...other}
         >
-          <Tooltip title="Sign in" placement="right">
+          <Tooltip title={t('sign-in')} placement="right">
             <IconButton
               component={RouterLink}
               href={paths.auth.login}
@@ -101,7 +103,7 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
           </Box>
         </Tooltip>
 
-        <Tooltip title="Logout" placement="right">
+        <Tooltip title={t('logout')} placement="right">
           <IconButton
             onClick={logout}
             size="small"
@@ -157,7 +159,7 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
           variant="subtitle2"
           sx={{ mb: 0.5, color: 'var(--layout-nav-text-primary-color)' }}
         >
-          Sign in to save chats
+          {t('sign-in-to-save')}
         </Typography>
 
         <Typography
@@ -169,7 +171,7 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
             lineHeight: 1.5,
           }}
         >
-          Keep your conversation history and get personalized help
+          {t('sign-in-benefit')}
         </Typography>
 
         <Button
@@ -180,7 +182,7 @@ export function NavAuthCard({ sx, mini = false, ...other }: NavAuthCardProps) {
           color="primary"
           startIcon={<Iconify icon="solar:login-2-bold" width={20} />}
         >
-          Sign In
+          {t('sign-in')}
         </Button>
       </Box>
     );

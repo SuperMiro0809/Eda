@@ -12,5 +12,10 @@
   "max_size": "max size of {{size}}",
   "general-info": "General",
   "security": "Security",
-  "rename": "Rename"
+  "rename": "Rename",
+  "sign-in": "Sign In",
+  "logout": "Logout",
+  "sign-in-to-save": "Sign in to save chats",
+  "sign-in-benefit": "Keep your conversation history and get personalized help",
+  "history": "History"
 }

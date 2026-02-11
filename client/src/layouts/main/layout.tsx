@@ -74,7 +74,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg
     ...(isAuthenticated && sessions.length > 0
       ? [
           {
-            subheader: 'History',
+            subheader: t('history', { ns: 'common' }),
             items: sessions.map((session) => ({
               title: session.title,
               path: `/chat/${session.id}`,

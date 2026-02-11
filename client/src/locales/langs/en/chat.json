@@ -12,8 +12,7 @@
 
   "suggestion-requirements": "What are the admission requirements?",
   "suggestion-deadlines": "Application deadlines",
-  "suggestion-programs": "Popular programs",
-  "suggestion-fees": "Tuition fees",
+  "suggestion-how-to-apply": "How do I apply?",
 
   "error-message": "Sorry, I encountered an error. Please try again."
 }
